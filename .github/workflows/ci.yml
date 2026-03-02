@@ -1,0 +1,26 @@
+name: CI  # 工作流名称
+
+# 触发条件：当推送到 main 分支，或者针对 main 分支创建 PR 时运行
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用 GitHub 托管的 Ubuntu 最新环境
+
+    steps:
+      # 第一步：检出你的仓库代码
+      - uses: actions/checkout@v4
+
+      # 第二步：运行一个简单的命令（你可以替换成自己的构建或测试命令）
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # 第三步：演示多行脚本
+      - name: Run a multi-line script
+        run: |
+          echo "This is a simple CI workflow."
+          echo "Add your own build/test steps here."
