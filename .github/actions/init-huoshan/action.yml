@@ -28,7 +28,7 @@ runs:
     - name: Verify installation
       shell: bash
       run: |
-        # 此时 PATH 尚未包含 ~/.volc/bin，需手动指定或重新加载 PATH
+        # 此时 PATH 尚未包含 $HOME/.volc/bin，需手动指定或重新加载 PATH
         export PATH="$HOME/.volc/bin:$PATH"
         if ! volc version &>/dev/null; then
           echo "❌ volc CLI installation failed."
@@ -48,7 +48,7 @@ runs:
         echo "🔧 Configuring volc CLI..."
 
         # 确保配置目录存在
-        mkdir -p .github/config/volc ~/.volc
+        mkdir -p .github/config/volc $HOME/.volc
 
         # 创建volc/credentials默认模板
         echo "[default]" > .github/config/volc/credentials
