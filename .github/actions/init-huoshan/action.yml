@@ -50,25 +50,16 @@ runs:
         # 确保配置目录存在
         mkdir -p .github/config/volc ~/.volc
 
-        # 如果 credentials 模板文件不存在，创建默认模板
-        if [ ! -f .github/config/volc/credentials ]; then
-          cat > .github/config/volc/credentials <<'EOF'
-[default]
-access_key_id     = 1234
-secret_access_key = 12345
-EOF
-        fi
-
-        # 如果 config 模板文件不存在，创建默认模板
-        if [ ! -f .github/config/volc/config ]; then
-          cat > .github/config/volc/config <<'EOF'
-[default]
-region       = 1234
-auto_upgrade = false
-
-[ml_platform] 
-EOF
-        fi
+        # 创建volc/credentials默认模板
+        echo "[default]" > .github/config/volc/credentials
+        echo "access_key_id     = 1234" >> .github/config/volc/credentials
+        echo "secret_access_key = 12345" >> .github/config/volc/credentials
+        # 创建volc/config默认模板
+        echo "[default]" > .github/config/volc/config
+        echo "region       = 1234" >> .github/config/volc/config
+        echo "auto_upgrade = false" >> .github/config/volc/config
+        echo "" >> .github/config/volc/config
+        echo "[ml_platform]" >> .github/config/volc/config
 
         # 替换 credentials 中的密钥
         sed -i.bak \
