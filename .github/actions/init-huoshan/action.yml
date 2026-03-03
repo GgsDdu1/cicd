@@ -72,7 +72,7 @@ runs:
 
         # 复制配置文件到 $HOME/.volc/credentials（volc CLI 默认读取位置）
         echo $HOME
-        cp .github/config/volc/credentials .github/config/volc/config $HOME/.volc/credentials
+        cp .github/config/volc/credentials .github/config/volc/config $HOME/.volc/
         cat $HOME/.volc/config
         # 清理备份文件（可选）
         rm -f .github/config/volc/credentials.bak .github/config/volc/config.bak
