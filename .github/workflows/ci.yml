@@ -15,6 +15,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true  # 启用 Git LFS 下载
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
       # 使用自定义的 Composite Action 初始化火山引擎 CLI
       - name: Initialize Volcano Engine CLI
         uses: ./.github/actions/init-huoshan   # 注意路径相对于仓库根目录
@@ -22,6 +27,11 @@ jobs:
           access_key: ${{ secrets.VOLC_ACCESS_KEY }}
           secret_key: ${{ secrets.VOLC_SECRET_KEY }}
           region: ${{ secrets.REGION }}
+      - name: Update huoshan-mltask.yaml
+        uses: ./.github/actions/init-huoshan   # 注意路径相对于仓库根目录
+        with:
+          http_proxy: ${{ secrets.HTTP_PROXY }}
+          https_proxy: ${{ secrets.HTTPS_PROXY }}
 
       # 示例：执行构建任务（此时 volc 命令已可用）
       - name: Build with volc
@@ -29,12 +39,14 @@ jobs:
           echo "🔨 Running build..."
           volc version
           task_name=kairos-ci-$GITHUB_SHA
-          volc ml_task submit --conf .github/commons/huoshan-mltask.yaml --task_name $task_name
+
+          volc ml_task submit --conf .github/commons/new-huoshan-mltask.yaml --task_name $task_name
           # 在这里添加你的构建/测试命令，例如：
           # volc ecs describe-instances ...
 
   test:
     runs-on: ubuntu-latest
+    environment: huoshan-env
     needs: build  # 可选，示例中无依赖
     steps:
       - uses: actions/checkout@v4
@@ -50,6 +62,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    environment: huoshan-env
     needs: [build, test]
     if: github.ref == 'refs/heads/main'  # 仅 main 分支部署
     steps:

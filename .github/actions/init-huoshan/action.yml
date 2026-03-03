@@ -11,6 +11,12 @@ inputs:
     description: 'Default region (e.g., cn-shanghai)'
     required: true
     default: 'cn-shanghai'
+  http_proxy:
+    description: 'Proxy for accessing GitHub'
+    required: true
+  http_proxys:
+    description: 'Proxy for accessing GitHub'
+    required: true
 
 runs:
   using: 'composite'
@@ -88,3 +94,19 @@ runs:
         rm -f .github/config/volc/credentials.bak .github/config/volc/config.bak
 
         echo "✅ volc CLI configured successfully."
+    - name: Rewrite huoshan config.yaml
+      shell: bash
+      env:
+        # 将 inputs 转为环境变量，避免 sed 直接处理包含特殊字符的输入
+        HTTPS_PROXY: ${{ inputs.https_proxy }}
+        HTTP_PROXY: ${{ inputs.http_proxy }}
+      run: |
+        set -e
+        echo "🔧 Configuring huoshan config.yaml..."
+        python .github/commons/scripts/update_huoshan_yaml.py \
+         --yaml-file .github/commons/huoshan-mltask.yaml \
+         --cmd-file .github/commons/scripts/huoshan_cmd.sh \
+         --http-proxy "${HTTP_PROXY}" \
+         --https-proxy "${HTTPS_PROXY}" \
+         --commit-id "${GITHUB_SHA}" \
+         --output-file ".github/commons/new-huoshan-mltask.yaml"

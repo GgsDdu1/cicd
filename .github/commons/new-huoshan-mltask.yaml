@@ -1,0 +1,87 @@
+TaskName: cicd测试
+Description: ''
+Entrypoint: '#!/bin/bash
+
+  set -e
+
+  export http_proxy
+
+  export https_proxy
+
+  echo "commit_id: $commit_id"
+
+  git clone --depth 1 https://github.com/kairos-agi/kairos-sensenova.git kairos-sensenova
+
+  cd kairos-sensenova
+
+  git fetch --depth 1 origin $commit_id  # 获取指定 commit（及其必要历史）
+
+  git checkout $commit_id
+
+  ls -alh
+
+  bash examples/inference.sh
+
+  '
+Tags: []
+UserCodePath: ''
+RemoteMountCodePath: /root/code/
+Envs:
+- Name: http_proxy
+  Value: http://sensecabin:MkV4WhSv3R@10.119.176.202:3128
+- Name: https_proxy
+  Value: http://sensecabin:MkV4WhSv3R@10.119.176.202:3128
+- Name: commit_id
+  Value: '12345'
+ImageUrl: iag-ad-01-cn-shanghai.cr.volces.com/ad/kairos_sensenova:v0.0.1
+ResourceQueueID: q-20250531181004-p959n
+ResourceQueueName: Qworld-Kairos
+Framework: PyTorchDDP
+TaskRoleSpecs:
+- RoleName: worker
+  RoleReplicas: 1
+  Flavor: custom
+  ResourceSpec:
+    Family: ml.pni2l
+    CPU: 13.0
+    Memory: 234.0
+    GPUNum: 1
+ActiveDeadlineSeconds: 432000
+DelayExitTimeSeconds: 0
+AccessType: Queue
+Preemptible: false
+Priority: 4
+RetryOptions:
+  EnableRetry: false
+  EnableReserveResourceOnRetry: false
+  MaxRetryTimes: 5
+  IntervalSeconds: 120
+  PolicySets:
+  - Failed
+DiagOptions:
+- Name: EnvironmentalDiagnosis
+  Enable: false
+- Name: PythonDetection
+  Enable: false
+  PythonDetectionInterval: 3600
+- Name: LogDetection
+  Enable: false
+  LogDetectionInterval: 1800
+Storages:
+- Type: Vepfs
+  MountPath: /KAIROS_vepfs-2/KAIROS_vepfs
+  VepfsId: vepfs-cnshaad37c25c7a3
+  SubPath: KAIROS_vepfs
+- Type: Vepfs
+  MountPath: /kairos-engineer/ModelZoo
+  VepfsId: vepfs-cnsh9fbc14670405
+  SubPath: ModelZoo
+  ReadOnly: true
+- Type: Vepfs
+  MountPath: /kairos-engineer/kairos-engineer
+  VepfsId: vepfs-cnsh9fbc14670405
+  SubPath: kairos-engineer
+- Type: Vepfs
+  MountPath: /kairos_vepfs_volc/action
+  VepfsId: vepfs-cnsh65336fad7cd5
+  SubPath: action

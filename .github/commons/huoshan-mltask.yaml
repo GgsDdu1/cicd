@@ -96,8 +96,22 @@ DiagOptions:
 #     SubPath: "replace with NAS sub path"  # 必填，TensorBoard 日志写入的存储实例子目录，当 Type 为 vePFS 时，需要拥有该子目录的挂载权限 
 # 挂载数据盘至训练容器中
 # SidecarMemoryRatio: "replace with your ratio"   # TOS 数据盘的缓存服务所需的内存比例
+# storages
 Storages:
-    - Type: "Vepfs"                                           # 挂载 vePFS 数据盘
-      MountPath: "/KAIROS_vepfs-2/KAIROS_vepfs"                     # 容器中的挂载目录
-      SubPath: "/KAIROS_vepfs"                  # 拥有挂载权限的 vePFS 子目录，挂载 vePFS 根目录时可忽略
-      VepfsId: vepfs-cnshaad37c25c7a3
+    - Type: "Vepfs"
+      MountPath: "/KAIROS_vepfs-2/KAIROS_vepfs"
+      VepfsId: "vepfs-cnshaad37c25c7a3"
+      SubPath: "KAIROS_vepfs"
+    - Type: "Vepfs"
+      MountPath: "/kairos-engineer/ModelZoo"
+      VepfsId: "vepfs-cnsh9fbc14670405"
+      SubPath: "ModelZoo"
+      ReadOnly: true
+    - Type: "Vepfs"
+      MountPath: "/kairos-engineer/kairos-engineer"
+      VepfsId: "vepfs-cnsh9fbc14670405"
+      SubPath: "kairos-engineer"
+    - Type: "Vepfs"
+      MountPath: "/kairos_vepfs_volc/action"
+      VepfsId: "vepfs-cnsh65336fad7cd5"
+      SubPath: "action"
