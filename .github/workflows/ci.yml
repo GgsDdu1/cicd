@@ -14,6 +14,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true  # 启用 Git LFS 下载
+      - name: Verify secrets are passed (masking check)
+        run: |
+          echo "Access key: ${{ secrets.VOLC_ACCESS_KEY }}"
+          echo "Secret key: ${{ secrets.VOLC_SECRET_KEY }}"
+          echo "Region: ${{ secrets.REGION }}"
+          echo "Access key length: ${#secrets.VOLC_ACCESS_KEY}"
+          echo "Secret key length: ${#secrets.VOLC_SECRET_KEY}"
+          echo "Region length: ${#secrets.REGION}"
       # 使用自定义的 Composite Action 初始化火山引擎 CLI
       - name: Initialize Volcano Engine CLI
         uses: ./.github/actions/init-huoshan   # 注意路径相对于仓库根目录

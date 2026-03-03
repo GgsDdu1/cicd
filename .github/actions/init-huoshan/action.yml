@@ -15,6 +15,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Debug inputs in composite action
+      run: |
+        echo "Input access_key length: ${#ACCESS_KEY}"
+        echo "Input secret_key length: ${#SECRET_KEY}"
+        echo "Input region length: ${#REGION}"
+      env:
+        ACCESS_KEY: ${{ inputs.access_key }}
+        SECRET_KEY: ${{ inputs.secret_key }}
+        REGION: ${{ inputs.region }}
+      shell: bash
     - name: Install volc CLI
       shell: bash
       run: |
