@@ -128,20 +128,7 @@ def write_taskid_to_file(task_id):
     print(f"已将task_id:{task_id}成功写入文件task_id.txt")
 
 def main():
-    task_id = None
-
-    def cleanup(signum, frame):
-        if task_id:
-            print("Received cancellation signal, cleaning up...")
-            # 调用取消任务的命令
-            run_cmd(f"volc ml_task cancel --id {task_id}")
-        else:
-            print("No task to cancel.")
-        sys.exit(1)
-
-    signal.signal(signal.SIGINT, cleanup)   # 处理 Ctrl+C
-    signal.signal(signal.SIGTERM, cleanup)  # 处理终止信号
-
+    
     # 读取环境变量
     task_name = os.environ.get('TASK_NAME')
     config_file = os.environ.get('HUOSHAN_TASK_CONFIG')
@@ -162,7 +149,7 @@ def main():
 
     # 2. 提交新任务
     task_id = submit_task(config_file, task_name)
-    # write_taskid_to_file(task_id)
+    write_taskid_to_file(task_id)
 
     # 3. 等待 Running
     wait_for_running(task_id, timeout, interval)
