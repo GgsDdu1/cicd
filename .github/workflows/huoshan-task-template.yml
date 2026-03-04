@@ -46,6 +46,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true
+      - name: Verify secrets are available
+        run: |
+          echo "VOLC_ACCESS_KEY length: ${#VOLC_ACCESS_KEY}"
+          echo "REGION: ${{ secrets.REGION }}"
+        env:
+          VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
 
       - name: Initialize volc CLI
         uses: ./.github/actions/init-huoshan
