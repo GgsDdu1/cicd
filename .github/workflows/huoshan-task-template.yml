@@ -38,8 +38,10 @@ on:
     #     required: true
 
 jobs:
-  execute:
+  run-task:
     runs-on: ubuntu-latest
+    environment:
+      name: huoshan-env
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
