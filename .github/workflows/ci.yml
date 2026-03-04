@@ -35,20 +35,20 @@ jobs:
     environment: huoshan-env
     needs: build
     steps:
-    - name: Debug PATH in test
-      run: |
-        echo "PATH: $PATH"
-        which volc || echo "volc not found"
-        echo "$HOME/.volc/bin" >> $GITHUB_PATH
-        cat $GITHUB_PATH  # 调试：查看是否写入成功
-        if ! volc version &>/dev/null; then
-          echo "❌ volc CLI installation failed."
-        fi
-        export PATH="$HOME/.volc/bin:$PATH"
-        if ! volc version &>/dev/null; then
-          echo "❌ volc CLI installation failed."
-          exit 1
-        fi
+      - name: Debug PATH in test
+        run: |
+          echo "PATH: $PATH"
+          which volc || echo "volc not found"
+          echo "$HOME/.volc/bin" >> $GITHUB_PATH
+          cat $GITHUB_PATH  # 调试：查看是否写入成功
+          if ! volc version &>/dev/null; then
+            echo "❌ volc CLI installation failed."
+          fi
+          export PATH="$HOME/.volc/bin:$PATH"
+          if ! volc version &>/dev/null; then
+            echo "❌ volc CLI installation failed."
+            exit 1
+          fi
       - name: Run tests
         run: |
           set -e
