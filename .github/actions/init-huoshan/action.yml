@@ -10,12 +10,6 @@ inputs:
   region:
     description: 'Default region (e.g., cn-shanghai)'
     required: true
-  http_proxy:
-    description: 'Proxy for accessing GitHub'
-    required: true
-  https_proxy:
-    description: 'Proxy for accessing GitHub'
-    required: true
 
 runs:
   using: 'composite'
@@ -34,19 +28,14 @@ runs:
       shell: bash
       run: |
         echo "🚀 Installing volc CLI..."
-        # 自动同意安装（echo y）
         echo y | sh -c "$(curl -fsSL https://ml-platform-public-examples-cn-beijing.tos-cn-beijing.volces.com/cli-binary/install.sh)"
         # 将 CLI 路径永久加入 PATH（后续步骤生效）
         echo "$HOME/.volc/bin" >> $GITHUB_PATH
-        cat $GITHUB_PATH  # 调试：查看是否写入成功
-        ls -l $HOME/.volc/bin/volc
         echo "✅ Installation completed."
 
     - name: Verify installation
       shell: bash
       run: |
-        # 此时 PATH 尚未包含 $HOME/.volc/bin，需手动指定或重新加载 PATH
-        export PATH="$HOME/.volc/bin:$PATH"
         if ! volc version &>/dev/null; then
           echo "❌ volc CLI installation failed."
           exit 1
@@ -56,7 +45,6 @@ runs:
     - name: Configure volc CLI
       shell: bash
       env:
-        # 将 inputs 转为环境变量，避免 sed 直接处理包含特殊字符的输入
         ACCESS_KEY: ${{ inputs.access_key }}
         SECRET_KEY: ${{ inputs.secret_key }}
         REGION: ${{ inputs.region }}
@@ -95,19 +83,4 @@ runs:
         rm -f .github/config/volc/credentials.bak .github/config/volc/config.bak
 
         echo "✅ volc CLI configured successfully."
-    - name: Rewrite huoshan config.yaml
-      shell: bash
-      env:
-        # 将 inputs 转为环境变量，避免 sed 直接处理包含特殊字符的输入
-        HTTPS_PROXY: ${{ inputs.https_proxy }}
-        HTTP_PROXY: ${{ inputs.http_proxy }}
-      run: |
-        set -e
-        echo "🔧 Configuring huoshan config.yaml..."
-        python .github/commons/scripts/update_huoshan_yaml.py \
-         --yaml-file .github/commons/huoshan-mltask.yaml \
-         --cmd-file .github/commons/scripts/huoshan_cmd.sh \
-         --http-proxy "${HTTP_PROXY}" \
-         --https-proxy "${HTTPS_PROXY}" \
-         --commit-id "${GITHUB_SHA}" \
-         --output-file ".github/commons/new-huoshan-mltask.yaml"
+    
