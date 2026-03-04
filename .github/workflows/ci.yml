@@ -9,7 +9,6 @@ on:
 jobs:
   test_A800:
     uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
-    environment: huoshan-env
     with:
       task_config_template: .github/commons/template/huoshan-mltask-template.yaml
       task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
@@ -18,9 +17,3 @@ jobs:
       task_name: kairos-ci-${{ github.sha }}
       pendding_timeout: 1800
       taskid_file: huoshan_taskid.txt
-    secrets:
-      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
-      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
-      REGION: ${{ secrets.REGION }}
-      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
-      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}

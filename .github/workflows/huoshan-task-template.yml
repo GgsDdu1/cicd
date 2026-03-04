@@ -25,21 +25,22 @@ on:
       taskid_file:
         required: true
         type: string
-    secrets:
-      VOLC_ACCESS_KEY:
-        required: true
-      VOLC_SECRET_KEY:
-        required: true
-      REGION:
-        required: true
-      HTTPS_PROXY:
-        required: true
-      HTTP_PROXY:
-        required: true
+    # secrets:
+    #   VOLC_ACCESS_KEY:
+    #     required: true
+    #   VOLC_SECRET_KEY:
+    #     required: true
+    #   REGION:
+    #     required: true
+    #   HTTPS_PROXY:
+    #     required: true
+    #   HTTP_PROXY:
+    #     required: true
 
 jobs:
   execute:
     runs-on: ubuntu-latest
+    environment: huoshan-env
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
