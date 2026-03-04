@@ -49,10 +49,14 @@ jobs:
           lfs: true
       - name: Verify secrets are available
         run: |
-          echo "VOLC_ACCESS_KEY length: ${#VOLC_ACCESS_KEY}"
-          echo "REGION: ${{ secrets.REGION }}"
+          if [ -z "$REGION" ] || [ ${#VOLC_ACCESS_KEY} -eq 0 ]; then
+            exit 1
+          else
+            echo "✅ 密钥校验成功！"
+          fi
         env:
           VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+          REGION: ${{ secrets.REGION }}
 
       - name: Initialize volc CLI
         uses: ./.github/actions/init-huoshan

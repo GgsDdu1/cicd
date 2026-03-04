@@ -14,11 +14,14 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Debug inputs in composite action
+    - name: Verify secrets are available
       run: |
-        echo "Input access_key length: ${#ACCESS_KEY}"
-        echo "Input secret_key length: ${#SECRET_KEY}"
-        echo "Input region length: ${#REGION}"
+        if [ -z "$REGION" ] || [ ${#ACCESS_KEY} -eq 0 ] || [ ${#SECRET_KEY} -eq 0 ]; then
+          echo "❌ 密钥校验失败，请完善配置 settings --> environments！"
+          exit 1
+        else
+          echo "✅ 密钥校验成功！"
+        fi
       env:
         ACCESS_KEY: ${{ inputs.access_key }}
         SECRET_KEY: ${{ inputs.secret_key }}
