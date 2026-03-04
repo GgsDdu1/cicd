@@ -10,6 +10,8 @@ jobs:
   test_A800:
     runs-on: ubuntu-latest
     environment: huoshan-env
+    env:
+      HUOSHAN_TASK_CONFIG: ".github/commons/huoshan-mltask.yaml"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,24 +33,21 @@ jobs:
       # 更新任务配置
       - name: Update huoshan config.yaml
         shell: bash
-        env:
-          HTTPS_PROXY: ${{ secrets.https_proxy }}
-          HTTP_PROXY: ${{ secrets.http_proxy }}
-          HUOSHAN_TASK_CONFIG: ".github/commons/huoshan-mltask.yaml"
         run: |
           set -e
           echo "🔧 Configuring huoshan config.yaml..."
           python .github/commons/scripts/update_huoshan_yaml.py \
           --yaml-file .github/commons/huoshan-mltask-template.yaml \
           --cmd-file .github/commons/scripts/huoshan_cmd.sh \
-          --http-proxy "${HTTP_PROXY}" \
-          --https-proxy "${HTTPS_PROXY}" \
+          --http-proxy "${{ secrets.https_proxy }}" \
+          --https-proxy "${{ secrets.http_proxy }}" \
           --commit-id "${GITHUB_SHA}" \
           --output-file "${HUOSHAN_TASK_CONFIG}"
-          # 传递变量给后面的step
-          echo "HUOSHAN_TASK_CONFIG=${HUOSHAN_TASK_CONFIG}" >> $GITHUB_ENV
       # 执行测试任务
       - name: Run tests in huoshanyun
+        env: 
+          SUBMIT_TIME_OUT: 1800 # 任务提交timeout
+          INTERVAL: 30 # 任务状态检查间隔
         run: |
           set -e
           # 1. 提交任务
@@ -61,11 +60,42 @@ jobs:
           fi
           echo "Task ID: $TASK_ID"
 
-          # 2. 在后台启动日志流，实时输出
-          echo "Starting log streaming..."
-          volc ml_task logs -f --task "$TASK_ID" -i worker-0
+          # 2.确保任务调度成功
+          START_TIME=$(date +%s)
+          while true; do
+            # 检查超时
+            CURRENT_TIME=$(date +%s)
+            ELAPSED=$((CURRENT_TIME - START_TIME))
+            if [ $ELAPSED -ge $SUBMIT_TIME_OUT ]; then
+              echo "⏰ Timeout reached after $SUBMIT_TIME_OUT s. Task did not become Running."
+              exit 1
+            fi
 
-          # 3.检查任务状态
+            # 获取任务状态
+            STATUS=$(volc ml_task get --id "$TASK_ID" --output json | jq -r '.[0].Status')
+            echo "Current status: $STATUS"
+
+            # 判断状态
+            case "$STATUS" in
+              "Running")
+                echo "✅ Task is now Running."
+                break
+                ;;
+              "Killing"|"Failed"|"Killed"|"Exception")
+                echo "❌ Task failed with status: $STATUS"
+                exit 1
+                ;;
+              *)
+                echo "Waiting... next check in ${INTERVAL}s"
+                sleep $INTERVAL
+                ;;
+            esac
+          done
+
+          # 3. 在后台启动日志流，实时输出
+          echo "Starting log streaming..."
+          volc ml_task logs -f --task "$TASK_ID" -i worker-0  || exit 1
+          # 4.检查任务状态
           STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
           if [ "$STATUS" = "Success" ]; then
             echo "✅ Task succeeded!"
