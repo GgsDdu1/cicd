@@ -38,6 +38,8 @@ runs:
         echo y | sh -c "$(curl -fsSL https://ml-platform-public-examples-cn-beijing.tos-cn-beijing.volces.com/cli-binary/install.sh)"
         # 将 CLI 路径永久加入 PATH（后续步骤生效）
         echo "$HOME/.volc/bin" >> $GITHUB_PATH
+        cat $GITHUB_PATH  # 调试：查看是否写入成功
+        ls -l $HOME/.volc/bin/volc
         echo "✅ Installation completed."
 
     - name: Verify installation
