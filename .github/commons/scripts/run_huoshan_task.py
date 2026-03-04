@@ -10,8 +10,8 @@ Volcano Engine ML Task 管理脚本
 - 任务结束后检查最终状态，成功则退出 0，否则退出 1。
 环境变量：
   TASK_NAME          : 任务名称
-  HUOSHAN_TASK_CONFIG: 任务配置文件路径
-  SUBMIT_TIME_OUT    : 等待 Running 的超时时间（秒，默认 1800）
+  TASK_CONFIG_FILE: 任务配置文件路径
+  PENDDING_TIME_OUT    : 等待 Running 的超时时间（秒，默认 1800）
   INTERVAL           : 状态检查间隔（秒，默认 30）
 """
 
@@ -122,21 +122,22 @@ def fetch_logs_on_failure(task_id):
     except Exception as e:
         print(f"Failed to fetch logs: {e}")
 
-def write_taskid_to_file(task_id):
-    with open("task_id.txt", "w") as f:
+def write_taskid_to_file(task_id, file_path):
+    with open(file_path, "w") as f:
         f.write(task_id)
-    print(f"已将task_id:{task_id}成功写入文件task_id.txt")
+    print(f"已将task_id:{task_id}成功写入文件{file_path}")
 
 def main():
     
     # 读取环境变量
     task_name = os.environ.get('TASK_NAME')
-    config_file = os.environ.get('HUOSHAN_TASK_CONFIG')
-    timeout = int(os.environ.get('SUBMIT_TIME_OUT', 1800))
+    config_file = os.environ.get('TASK_CONFIG_FILE')
+    timeout = int(os.environ.get('PENDDING_TIME_OUT', 1800))
     interval = int(os.environ.get('INTERVAL', 30))
+    taskid_file = os.environ.get('TASKID_FILE')
 
     if not task_name or not config_file:
-        print("Error: TASK_NAME and HUOSHAN_TASK_CONFIG must be set.")
+        print("Error: TASK_NAME and TASK_CONFIG_FILE must be set.")
         sys.exit(1)
 
     # 1. 检查并取消已存在的同名运行中任务
@@ -149,7 +150,7 @@ def main():
 
     # 2. 提交新任务
     task_id = submit_task(config_file, task_name)
-    write_taskid_to_file(task_id)
+    write_taskid_to_file(task_id, taskid_file)
 
     # 3. 等待 Running
     wait_for_running(task_id, timeout, interval)

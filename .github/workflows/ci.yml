@@ -8,55 +8,19 @@ on:
 
 jobs:
   test_A800:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
     environment: huoshan-env
-    env:
-      HUOSHAN_TASK_CONFIG: ".github/commons/huoshan-mltask.yaml"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          lfs: true  # 启用 Git LFS 下载
-      # 安装yq工具
-      - name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-          sudo chmod +x /usr/local/bin/yq
-          yq --version
-      # 初始化火山引擎 CLI以及更新任务配置
-      - name: Initialize volc CLI
-        uses: ./.github/actions/init-huoshan
-        with:
-          access_key: ${{ secrets.VOLC_ACCESS_KEY }}
-          secret_key: ${{ secrets.VOLC_SECRET_KEY }}
-          region: ${{ secrets.REGION }}
-      # 更新任务配置
-      - name: Update huoshan config.yaml
-        shell: bash
-        run: |
-          set -e
-          echo "🔧 Configuring huoshan config.yaml..."
-          python .github/commons/scripts/update_huoshan_yaml.py \
-          --yaml-file .github/commons/huoshan-mltask-template.yaml \
-          --cmd-file .github/commons/scripts/huoshan_cmd.sh \
-          --http-proxy "${{ secrets.https_proxy }}" \
-          --https-proxy "${{ secrets.http_proxy }}" \
-          --commit-id "${GITHUB_SHA}" \
-          --output-file "${HUOSHAN_TASK_CONFIG}"
-      - name: Run huoshan task with Python
-        env:
-          TASK_NAME: kairos-ci-${{ github.sha }}
-          SUBMIT_TIME_OUT: 1800
-          INTERVAL: 30
-        run: |
-          python .github/commons/scripts/run_huoshan_task.py
-      - name: Cleanup on cancellation
-        if: ${{ cancelled() }}
-        run: |
-          if [ -f task_id.txt ]; then
-            TASK_ID=$(cat task_id.txt)
-            echo "🧹 Cancelling task $TASK_ID due to workflow cancellation"
-            volc ml_task cancel --id "$TASK_ID"
-          else
-            echo "⚠️ No task_id.txt found, skipping cancellation"
-          fi
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/huoshan-mltask.yaml
+      update_config_script: .github/commons/scripts/update_huoshan_config.py
+      task_name: kairos-ci-${{ github.sha }}
+      pendding_timeout: 1800
+      taskid_file: huoshan_taskid.txt
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}

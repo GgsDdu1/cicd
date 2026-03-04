@@ -1,0 +1,92 @@
+name: HuoShan Task Template
+
+on:
+  workflow_call:
+    inputs:
+      task_config_template:
+        required: true
+        type: string
+      task_cmd_file:
+        required: true
+        type: string
+      task_config_file:
+        required: true
+        type: string
+      update_config_script:
+        required: true
+        type: string
+      task_name:
+        required: true
+        type: string
+      pendding_timeout:
+        required: false
+        type: number
+        default: 1800
+      taskid_file:
+        required: true
+        type: string
+    secrets:
+      VOLC_ACCESS_KEY:
+        required: true
+      VOLC_SECRET_KEY:
+        required: true
+      REGION:
+        required: true
+      HTTPS_PROXY:
+        required: true
+      HTTP_PROXY:
+        required: true
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Initialize volc CLI
+        uses: ./.github/actions/init-huoshan
+        with:
+          access_key: ${{ secrets.VOLC_ACCESS_KEY }}
+          secret_key: ${{ secrets.VOLC_SECRET_KEY }}
+          region: ${{ secrets.REGION }}
+
+      - name: Update huoshan config.yaml
+        shell: bash
+        env:
+          TEMPLATE_FILE: ${{ inputs.task_config_template }}
+          CMD_FILE: ${{ inputs.task_cmd_file }}
+          HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+          HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+          COMMIT_ID: ${{ github.sha }}
+          OUTPUT_FILE: ${{ inputs.task_config_file }}
+          SCRIPT_FILE: ${{ inputs.update_config_script }}
+        run: |
+          set -e
+          echo "🔧 Use ${SCRIPT_FILE} Configuring huoshan config.yaml..."
+          python ${SCRIPT_FILE}
+
+      - name: Run huoshan task with Python
+        env:
+          TASK_NAME: ${{ inputs.task_name }}
+          TASK_CONFIG_FILE: ${{ inputs.task_config_file }}
+          PENDDING_TIME_OUT: ${{ inputs.pendding_timeout }}
+          INTERVAL: 30
+          TASKID_FILE: ${{ inputs.taskid_file }}
+        run: |
+          python .github/commons/scripts/run_huoshan_task.py
+
+      - name: Cleanup on cancellation
+        if: ${{ cancelled() }}
+        env:
+          TASKID_FILE: ${{ inputs.taskid_file }}
+        run: |
+          if [ -f "$TASKID_FILE" ]; then
+            TASK_ID=$(cat "$TASKID_FILE")
+            echo "🧹 Cancelling task $TASK_ID due to workflow cancellation"
+            volc ml_task cancel --id "$TASK_ID"
+          else
+            echo "⚠️ No $TASKID_FILE found, skipping cancellation"
+          fi
