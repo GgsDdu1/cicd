@@ -35,18 +35,18 @@ jobs:
           HTTPS_PROXY: ${{ secrets.https_proxy }}
           HTTP_PROXY: ${{ secrets.http_proxy }}
           HUOSHAN_TASK_CONFIG: ".github/commons/huoshan-mltask.yaml"
-          run: |
-            set -e
-            echo "🔧 Configuring huoshan config.yaml..."
-            python .github/commons/scripts/update_huoshan_yaml.py \
-            --yaml-file .github/commons/huoshan-mltask-template.yaml \
-            --cmd-file .github/commons/scripts/huoshan_cmd.sh \
-            --http-proxy "${HTTP_PROXY}" \
-            --https-proxy "${HTTPS_PROXY}" \
-            --commit-id "${GITHUB_SHA}" \
-            --output-file "${HUOSHAN_TASK_CONFIG}"
-            # 传递变量给后面的step
-            echo "HUOSHAN_TASK_CONFIG=${HUOSHAN_TASK_CONFIG}" >> $GITHUB_ENV
+        run: |
+          set -e
+          echo "🔧 Configuring huoshan config.yaml..."
+          python .github/commons/scripts/update_huoshan_yaml.py \
+          --yaml-file .github/commons/huoshan-mltask-template.yaml \
+          --cmd-file .github/commons/scripts/huoshan_cmd.sh \
+          --http-proxy "${HTTP_PROXY}" \
+          --https-proxy "${HTTPS_PROXY}" \
+          --commit-id "${GITHUB_SHA}" \
+          --output-file "${HUOSHAN_TASK_CONFIG}"
+          # 传递变量给后面的step
+          echo "HUOSHAN_TASK_CONFIG=${HUOSHAN_TASK_CONFIG}" >> $GITHUB_ENV
       # 执行测试任务
       - name: Run tests in huoshanyun
         run: |
