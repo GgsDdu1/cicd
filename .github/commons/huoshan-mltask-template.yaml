@@ -46,7 +46,7 @@ TaskRoleSpecs:
         GPUNum: 1
 
 # 最长运行时间
-ActiveDeadlineSeconds: 432000
+ActiveDeadlineSeconds: 7200
 # 实例保留时长
 DelayExitTimeSeconds: 0
 # 可见范围，支持 Public / Queue / Private

@@ -39,3 +39,5 @@ git checkout <commit-id>
 volc ml_task logs --task t-20260304153259-48whx -i worker-0 -f
 
 STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
+
+volc ml_task cancel --id t-20260304160336-mjw4d

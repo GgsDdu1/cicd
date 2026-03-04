@@ -43,63 +43,71 @@ jobs:
           --https-proxy "${{ secrets.http_proxy }}" \
           --commit-id "${GITHUB_SHA}" \
           --output-file "${HUOSHAN_TASK_CONFIG}"
-      # 执行测试任务
-      - name: Run tests in huoshanyun
-        env: 
-          SUBMIT_TIME_OUT: 1800 # 任务提交timeout
-          INTERVAL: 30 # 任务状态检查间隔
+      - name: Run huoshan task with Python
+        env:
+          TASK_NAME: kairos-ci-${{ github.sha }}
+          HUOSHAN_TASK_CONFIG: .github/commons/new-huoshan-mltask.yaml
+          SUBMIT_TIME_OUT: 1800
+          INTERVAL: 30
         run: |
-          set -e
-          # 1. 提交任务
-          TASK_NAME=kairos-ci-$GITHUB_SHA
-          output=$(volc ml_task submit --conf ${HUOSHAN_TASK_CONFIG} --task_name "$TASK_NAME" --output json)
-          TASK_ID=$(echo "$output" | jq -r '.Id')
-          if [ -z "$TASK_ID" ] || [ "$TASK_ID" = "null" ]; then
-             echo "Failed to get task ID from submit output: $output"
-            exit 1
-          fi
-          echo "Task ID: $TASK_ID"
+          python .github/commons/scripts/run_huoshan_task.py
+      # # 执行测试任务
+      # - name: Run tests in huoshanyun
+      #   env: 
+      #     SUBMIT_TIME_OUT: 1800 # 任务提交timeout
+      #     INTERVAL: 30 # 任务状态检查间隔
+      #   run: |
+      #     set -e
+      #     # 1. 提交任务
+      #     TASK_NAME=kairos-ci-$GITHUB_SHA
+      #     output=$(volc ml_task submit --conf ${HUOSHAN_TASK_CONFIG} --task_name "$TASK_NAME" --output json)
+      #     TASK_ID=$(echo "$output" | jq -r '.Id')
+      #     if [ -z "$TASK_ID" ] || [ "$TASK_ID" = "null" ]; then
+      #        echo "Failed to get task ID from submit output: $output"
+      #       exit 1
+      #     fi
+      #     echo "Task ID: $TASK_ID"
 
-          # 2.确保任务调度成功
-          START_TIME=$(date +%s)
-          while true; do
-            # 检查超时
-            CURRENT_TIME=$(date +%s)
-            ELAPSED=$((CURRENT_TIME - START_TIME))
-            if [ $ELAPSED -ge $SUBMIT_TIME_OUT ]; then
-              echo "⏰ Timeout reached after $SUBMIT_TIME_OUT s. Task did not become Running."
-              exit 1
-            fi
+      #     # 2.确保任务调度成功
+      #     START_TIME=$(date +%s)
+      #     while true; do
+      #       # 检查超时
+      #       CURRENT_TIME=$(date +%s)
+      #       ELAPSED=$((CURRENT_TIME - START_TIME))
+      #       if [ $ELAPSED -ge $SUBMIT_TIME_OUT ]; then
+      #         echo "⏰ Timeout reached after $SUBMIT_TIME_OUT s. Task did not become Running."
+      #         exit 1
+      #       fi
 
-            # 获取任务状态
-            STATUS=$(volc ml_task get --id "$TASK_ID" --output json | jq -r '.[0].Status')
-            echo "Current status: $STATUS"
+      #       # 获取任务状态
+      #       STATUS=$(volc ml_task get --id "$TASK_ID" --output json | jq -r '.[0].Status')
+      #       echo "Current status: $STATUS"
 
-            # 判断状态
-            case "$STATUS" in
-              "Running")
-                echo "✅ Task is now Running."
-                break
-                ;;
-              "Killing"|"Failed"|"Killed"|"Exception")
-                echo "❌ Task failed with status: $STATUS"
-                exit 1
-                ;;
-              *)
-                echo "Waiting... next check in ${INTERVAL}s"
-                sleep $INTERVAL
-                ;;
-            esac
-          done
+      #       # 判断状态
+      #       case "$STATUS" in
+      #         "Running")
+      #           echo "✅ Task is now Running."
+      #           break
+      #           ;;
+      #         "Killing"|"Failed"|"Killed"|"Exception")
+      #           echo "❌ Task failed with status: $STATUS"
+      #           exit 1
+      #           ;;
+      #         *)
+      #           echo "Waiting... next check in ${INTERVAL}s"
+      #           sleep $INTERVAL
+      #           ;;
+      #       esac
+      #     done
 
-          # 3. 在后台启动日志流，实时输出
-          echo "Starting log streaming..."
-          volc ml_task logs -f --task "$TASK_ID" -i worker-0  || exit 1
-          # 4.检查任务状态
-          STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
-          if [ "$STATUS" = "Success" ]; then
-            echo "✅ Task succeeded!"
-            exit 0
-          else
-            echo "❌ Task Failed! status:$STATUS"
-          fi
+      #     # 3. 在后台启动日志流，实时输出
+      #     echo "Starting log streaming..."
+      #     volc ml_task logs -f --task "$TASK_ID" -i worker-0  || exit 1
+      #     # 4.检查任务状态
+      #     STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
+      #     if [ "$STATUS" = "Success" ]; then
+      #       echo "✅ Task succeeded!"
+      #       exit 0
+      #     else
+      #       echo "❌ Task Failed! status:$STATUS"
+      #     fi
