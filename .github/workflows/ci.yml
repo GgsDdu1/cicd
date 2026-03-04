@@ -17,3 +17,9 @@ jobs:
       task_name: kairos-ci-${{ github.sha }}
       pendding_timeout: 1800
       taskid_file: huoshan_taskid.txt
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
