@@ -91,28 +91,37 @@ def wait_for_running(task_id, timeout, interval):
             print(f"Waiting... next check in {interval}s")
             time.sleep(interval)
 
-def stream_logs_with_retry(task_id):
-    """
-    实时输出日志，如果命令异常退出（panic），则自动重试。
-    当任务状态变为终态时停止重试。
-    """
+def wait_for_completion(task_id, interval):
+    """等待任务进入终态，返回最终状态"""
     while True:
-        print("Starting log streaming...")
-        cmd = f"volc ml_task logs -f --task {task_id} -i worker-0"
-        retcode = run_cmd_live(cmd)
-
-        # 检查任务是否已经结束
         status = get_task_status(task_id)
-        if status in ("Success", "Failed", "Killed", "Exception", "Killing"):
-            print(f"Task reached terminal state: {status}. Stopping log streaming.")
-            break
+        if status is None:
+            # 获取失败，继续等待
+            time.sleep(interval)
+            continue
 
-        if retcode != 0:
-            print(f"Log streaming command exited with code {retcode}, possibly panic. Retrying in 5 seconds...")
-            time.sleep(5)
-        else:
-            # 正常退出（比如任务结束），也退出循环
-            break
+        print(f"Current status: {status}")
+
+        # 终态判断：Success, Failed, Killed, Exception, Killing? Killing是过渡状态，可能最终变为Killed。
+        if status in ("Success", "Failed", "Killed", "Exception"):
+            return status
+        elif status == "Killing":
+            # Killing可能很快变成Killed，继续等待
+            pass
+        # 其他状态继续等待
+        time.sleep(interval)
+
+def fetch_logs_on_failure(task_id):
+    """如果任务失败，获取并打印日志"""
+    print("Fetching logs due to task failure...")
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0"
+    try:
+        # 使用 run_cmd_live 实时输出，或一次性获取
+        # 这里使用 run_cmd_live 以便实时看到日志
+        run_cmd_live(cmd)
+    except Exception as e:
+        print(f"Failed to fetch logs: {e}")
+
 
 def main():
     # 读取环境变量
@@ -120,8 +129,7 @@ def main():
     config_file = os.environ.get('HUOSHAN_TASK_CONFIG')
     timeout = int(os.environ.get('SUBMIT_TIME_OUT', 1800))
     interval = int(os.environ.get('INTERVAL', 30))
-    timeout = int(os.environ.get('SUBMIT_TIME_OUT', 1800))
-    interval = int(os.environ.get('INTERVAL', 30))
+
     if not task_name or not config_file:
         print("Error: TASK_NAME and HUOSHAN_TASK_CONFIG must be set.")
         sys.exit(1)
@@ -140,15 +148,16 @@ def main():
     # 3. 等待 Running
     wait_for_running(task_id, timeout, interval)
 
-    # 4. 流式日志（带重试）
-    stream_logs_with_retry(task_id)
+    # 4. 等待任务完成
+    final_status = wait_for_completion(task_id, interval)
 
-    # 5. 最终状态检查
-    final_status = get_task_status(task_id)
+    # 5. 根据最终状态处理
     if final_status == "Success":
         print("✅ Task succeeded!")
         sys.exit(0)
     else:
+        # 失败，获取日志
+        fetch_logs_on_failure(task_id)
         print(f"❌ Task failed! status: {final_status}")
         sys.exit(1)
 
