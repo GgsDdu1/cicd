@@ -4,6 +4,7 @@ Volcano Engine ML Task 管理脚本
 功能：
 - 提交任务前，检查是否存在同名且运行中的任务，若有则取消。
 - 提交任务，获取 Task ID。
+- 将TASK_ID写入文件task_id.txt中
 - 等待任务进入 Running 状态（超时控制）。
 - 实时流式输出日志（带重试，处理命令 panic）。
 - 任务结束后检查最终状态，成功则退出 0，否则退出 1。
@@ -19,8 +20,7 @@ import sys
 import time
 import json
 import subprocess
-import shlex
-
+import signal
 def run_cmd(cmd, check=True, capture_output=True):
     """执行命令，返回输出或抛出异常"""
     result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True)
@@ -122,8 +122,26 @@ def fetch_logs_on_failure(task_id):
     except Exception as e:
         print(f"Failed to fetch logs: {e}")
 
+def write_taskid_to_file(task_id):
+    with open("task_id.txt", "w") as f:
+        f.write(task_id)
+    print(f"已将task_id:{task_id}成功写入文件task_id.txt")
 
 def main():
+    task_id = None
+
+    def cleanup(signum, frame):
+        if task_id:
+            print("Received cancellation signal, cleaning up...")
+            # 调用取消任务的命令
+            run_cmd(f"volc ml_task cancel --id {task_id}")
+        else:
+            print("No task to cancel.")
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT, cleanup)   # 处理 Ctrl+C
+    signal.signal(signal.SIGTERM, cleanup)  # 处理终止信号
+
     # 读取环境变量
     task_name = os.environ.get('TASK_NAME')
     config_file = os.environ.get('HUOSHAN_TASK_CONFIG')
@@ -144,6 +162,7 @@ def main():
 
     # 2. 提交新任务
     task_id = submit_task(config_file, task_name)
+    # write_taskid_to_file(task_id)
 
     # 3. 等待 Running
     wait_for_running(task_id, timeout, interval)

@@ -50,6 +50,16 @@ jobs:
           INTERVAL: 30
         run: |
           python .github/commons/scripts/run_huoshan_task.py
+
+      # # ci被取消后，要把火山云的任务取消掉，避免资源浪费
+      # - name: Cleanup on cancellation
+      #   if: ${{ cancelled() }}
+      #   run: |
+      #     TASK_ID=$(cat task_id.txt)
+      #     if [ -n "$TASK_ID" ]; then
+      #       echo "🧹 Cancelling task $TASK_ID due to workflow cancellation"
+      #       volc ml_task cancel --id $TASK_ID
+      #     fi
       # # 执行测试任务
       # - name: Run tests in huoshanyun
       #   env: 
