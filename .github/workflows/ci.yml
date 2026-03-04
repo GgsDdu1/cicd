@@ -20,7 +20,7 @@ jobs:
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
           yq --version
-      # 使用自定义的 Composite Action 初始化火山引擎 CLI
+      # 使用自定义的 Composite Action 初始化火山引擎 CLI以及更新任务配置
       - name: Initialize Volcano Engine CLI
         uses: ./.github/actions/init-huoshan   # 注意路径相对于仓库根目录
         with:
@@ -30,47 +30,33 @@ jobs:
           http_proxy: ${{ secrets.HTTP_PROXY }}
           https_proxy: ${{ secrets.HTTPS_PROXY }}
 
-
-      # 示例：执行构建任务（此时 volc 命令已可用）
-      - name: Build with volc
-        run: |
-          echo "🔨 Running build..."
-          volc version
-          task_name=kairos-ci-$GITHUB_SHA
-
-          volc ml_task submit --conf .github/commons/new-huoshan-mltask.yaml --task_name $task_name
-          # 在这里添加你的构建/测试命令，例如：
-          # volc ecs describe-instances ...
-
   test:
     runs-on: ubuntu-latest
     environment: huoshan-env
-    needs: build  # 可选，示例中无依赖
+    needs: build
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/init-huoshan
-        with:
-          access_key: ${{ secrets.VOLC_ACCESS_KEY }}
-          secret_key: ${{ secrets.VOLC_SECRET_KEY }}
-          region: ${{ secrets.REGION }}
       - name: Run tests
         run: |
-          echo "🧪 Running tests..."
-          # 你的测试命令
+          set -e
+          # 1. 提交任务
+          TASK_NAME=kairos-ci-$GITHUB_SHA
+          output=$(volc ml_task submit --conf .github/commons/new-huoshan-mltask.yaml --task_name "$TASK_NAME" --output json)
+          TASK_ID=$(echo "$output" | jq -r '.Id')
+          if [ -z "$TASK_ID" ] || [ "$TASK_ID" = "null" ]; then
+             echo "Failed to get task ID from submit output: $output"
+            exit 1
+          fi
+          echo "Task ID: $TASK_ID"
 
-  deploy:
-    runs-on: ubuntu-latest
-    environment: huoshan-env
-    needs: [build, test]
-    if: github.ref == 'refs/heads/main'  # 仅 main 分支部署
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/init-huoshan
-        with:
-          access_key: ${{ secrets.VOLC_ACCESS_KEY }}
-          secret_key: ${{ secrets.VOLC_SECRET_KEY }}
-          region: ${{ secrets.REGION }}
-      - name: Deploy
-        run: |
-          echo "🚀 Deploying..."
-          # 你的部署命令
+          # 2. 在后台启动日志流，实时输出
+          echo "Starting log streaming..."
+          volc ml_task logs -f --task "$TASK_ID" -i worker-0
+
+          # 3.检查任务状态
+          STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
+          if [ "$STATUS" = "Success" ]; then
+            echo "✅ Task succeeded!"
+            exit 0
+          else
+            echo "❌ Task Failed! status:$STATUS"
+          fi

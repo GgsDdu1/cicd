@@ -35,3 +35,7 @@ git clone --depth 1 https://github.com/kairos-agi/kairos-sensenova.git kairos-se
 cd kairos-sensenova
 git fetch --depth 1 origin <commit-id>  # 获取指定 commit（及其必要历史）
 git checkout <commit-id>
+
+volc ml_task logs --task t-20260304105121-tw2kp -i worker-0 -f
+
+STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
