@@ -46,7 +46,6 @@ jobs:
       - name: Run huoshan task with Python
         env:
           TASK_NAME: kairos-ci-${{ github.sha }}
-          HUOSHAN_TASK_CONFIG: .github/commons/new-huoshan-mltask.yaml
           SUBMIT_TIME_OUT: 1800
           INTERVAL: 30
         run: |
