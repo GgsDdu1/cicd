@@ -10,11 +10,10 @@ inputs:
   region:
     description: 'Default region (e.g., cn-shanghai)'
     required: true
-    default: 'cn-shanghai'
   http_proxy:
     description: 'Proxy for accessing GitHub'
     required: true
-  http_proxys:
+  https_proxy:
     description: 'Proxy for accessing GitHub'
     required: true
 

@@ -4,9 +4,9 @@ Entrypoint: '#!/bin/bash
 
   set -e
 
-  export http_proxy
+  export http_proxy=$http_proxy
 
-  export https_proxy
+  export https_proxy=$https_proxy
 
   echo "commit_id: $commit_id"
 
