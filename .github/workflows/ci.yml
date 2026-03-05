@@ -15,7 +15,7 @@ jobs:
       task_config_file: .github/commons/huoshan-mltask.yaml
       update_config_script: .github/commons/scripts/update_huoshan_config.py
       task_name: kairos-ci-${{ github.sha }}
-      pendding_timeout: 1800
+      pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
       case_cmd: "bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
     secrets:
@@ -32,9 +32,9 @@ jobs:
       task_config_file: .github/commons/huoshan-mltask.yaml
       update_config_script: .github/commons/scripts/update_huoshan_config.py
       task_name: kairos-ci-${{ github.sha }}
-      pendding_timeout: 1800
+      pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
-      case_cmd: "bash examples/multi_gpu_inference.sh example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
+      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
       VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}

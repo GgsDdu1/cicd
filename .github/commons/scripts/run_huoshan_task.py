@@ -71,6 +71,7 @@ def wait_for_running(task_id, timeout, interval):
         elapsed = time.time() - start_time
         if elapsed > timeout:
             print(f"⏰ Timeout reached after {timeout}s. Task did not become Running.")
+            cancel_task(task_id)
             sys.exit(1)
 
         status = get_task_status(task_id)
@@ -123,7 +124,7 @@ def fetch_logs_on_failure(task_id):
 def fetch_logs_on_success(task_id):
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task success...")
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 20"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 50"
     try:
         run_cmd_live(cmd)
     except Exception as e:

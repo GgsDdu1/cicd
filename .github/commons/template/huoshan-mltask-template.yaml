@@ -15,12 +15,10 @@ UserCodePath: ""
 # 容器中的代码挂载路径
 RemoteMountCodePath: "/root/code/"
 # 环境变量
-Envs: []
-#     - Name: "env1"
-#       Value: "value1"
-#     - Name: "env2"
-#       Value: "value2"
-#       IsPrivate: false     # 是否将某个环境变量设置为在详情页中仅创建人可见
+Envs: 
+    - Name: "DETAILED_PERF_ENABLE"
+      Value: True
+
 # 镜像 URL 地址
 ImageUrl: "iag-ad-01-cn-shanghai.cr.volces.com/ad/kairos_sensenova:v0.0.1"
 # 当 ImageUrl 为私有仓库的镜像时需要填写仓库的用户名和密钥才能拉取镜像

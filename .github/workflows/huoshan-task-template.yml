@@ -21,7 +21,7 @@ on:
       pendding_timeout:
         required: false
         type: number
-        default: 1800
+        default: 7200
       taskid_file:
         required: true
         type: string

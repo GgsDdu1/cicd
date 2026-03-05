@@ -18,6 +18,23 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pyyaml"])
     import yaml
 
+resource_map={
+        1: {
+            "CPU": 13.000,
+            "Memory": 234.000,
+            "GPUNum": 1
+        },
+        4:{
+            "CPU": 52.000,
+            "Memory": 937.000,
+            "GPUNum": 4
+        },
+        8:{
+            "CPU": 105.000,
+            "Memory": 1875.000,
+            "GPUNum": 8
+        }
+    }
 
 def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cmd, output_path=None):
     """主逻辑：读取 YAML，修改 Envs 和 Entrypoint，写入文件"""
@@ -51,6 +68,20 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cm
 
     data["Entrypoint"] = cmd_content
 
+    # 4. 修改资源配置
+    gpu_num = get_gpu_num(case_cmd)
+    if gpu_num in resource_map.keys():
+        for role in data.get("TaskRoleSpecs", []):
+            if role.get("RoleName") == "worker":
+                # 修改ResourceSpec中的配置
+                resource_spec = role["ResourceSpec"]
+                resource_spec["CPU"] = resource_map[gpu_num]["CPU"]
+                resource_spec["Memory"] = resource_map[gpu_num]["Memory"]
+                resource_spec["GPUNum"] = resource_map[gpu_num]["GPUNum"]
+                break 
+    else:
+        print(f"❌Unsupport gpu_num:{gpu_num}!!!")
+
     # 4. 写入新的 YAML
     output_path = output_path or yaml_path  # 默认覆盖原文件
     with open(output_path, "w", encoding="utf-8") as f:
@@ -59,6 +90,28 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cm
 
     print(f"✅ YAML 文件已更新: {output_path}")
 
+import re
+
+def get_gpu_num(case_cmd: str) -> int:
+    """
+    处理case_cmd环境变量，按规则返回数字：
+    1. 检查命令中是否包含"multi_gpu"（对应multi_gpu_inference.sh）
+    2. 若包含，提取最后一个参数，判断是否为纯数字
+    3. 是数字返回该数字，否则返回1；不包含也返回1
+    """
+    if "multi_gpu" not in case_cmd:
+        return 1
+    
+    cmd_parts = case_cmd.strip().split()
+    if not cmd_parts:  # 极端情况：命令为空
+        return 1
+    
+    last_param = cmd_parts[-1]
+
+    if re.match(r"^[0-9]+$", last_param):
+        return int(last_param)
+    else:
+        return 1
 
 def main():
     # 读取环境变量
@@ -69,7 +122,6 @@ def main():
     commit_id = os.environ.get('COMMIT_ID')
     output_file = os.environ.get('OUTPUT_FILE')
     case_cmd = os.environ.get('CASE_CMD')
-
 
     update_yaml(
         yaml_path=template_file,
