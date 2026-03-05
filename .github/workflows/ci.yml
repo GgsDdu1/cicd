@@ -14,7 +14,7 @@ jobs:
       task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
       task_config_file: .github/commons/huoshan-mltask.yaml
       update_config_script: .github/commons/scripts/update_huoshan_config.py
-      task_name: kairos-ci-${{ github.sha }}
+      task_name: kairos-ci-480p_t2v_1gpu-${{ github.sha[:8] }}
       pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
       case_cmd: "bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
@@ -31,7 +31,7 @@ jobs:
       task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
       task_config_file: .github/commons/huoshan-mltask.yaml
       update_config_script: .github/commons/scripts/update_huoshan_config.py
-      task_name: kairos-ci-${{ github.sha }}
+      task_name: kairos-ci-720p_ti2v_4gpu-${{ github.sha[:8] }}
       pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
       case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
