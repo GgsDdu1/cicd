@@ -89,7 +89,6 @@ def wait_for_running(task_id, timeout, interval):
             print(f"❌ Task failed with status: {status}")
             sys.exit(1)
         else:
-            print(f"Waiting... next check in {interval}s")
             time.sleep(interval)
 
 def wait_for_completion(task_id, interval):
@@ -115,7 +114,7 @@ def wait_for_completion(task_id, interval):
 def fetch_logs_on_failure(task_id):
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task failure...")
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 50"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines 50"
     try:
         run_cmd_live(cmd)
     except Exception as e:
@@ -124,7 +123,8 @@ def fetch_logs_on_failure(task_id):
 def fetch_logs_on_success(task_id):
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task success...")
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 50"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines 300 | python {script_dir}/filter_huoshan_logs.py"
     try:
         run_cmd_live(cmd)
     except Exception as e:

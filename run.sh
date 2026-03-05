@@ -49,4 +49,7 @@ bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/k
 bash examples/multi_gpu_inference.sh example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 
 
 
-volc ml_task logs --task t-20260305112314-cpz4m -i worker-0 --lines 20
+
+volc ml_task logs --task t-20260305153254-m246n -i worker-0 --lines 300  | python .github/commons/scripts/filter_huoshan_logs.py
+
+
