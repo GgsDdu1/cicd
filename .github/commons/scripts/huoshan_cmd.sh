@@ -9,5 +9,8 @@ cd /root/code/kairos-sensenova
 git fetch --depth 1 origin $commit_id  # 获取指定 commit（及其必要历史）
 git checkout $commit_id
 ls -alh
-bash examples/inference.sh
+# 测试运行的命令
+echo "Run cmd: {$case_cmd}"
+$case_cmd
+# bash examples/inference.sh
 

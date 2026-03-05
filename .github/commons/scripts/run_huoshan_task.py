@@ -114,10 +114,17 @@ def wait_for_completion(task_id, interval):
 def fetch_logs_on_failure(task_id):
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task failure...")
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 50"
     try:
-        # 使用 run_cmd_live 实时输出，或一次性获取
-        # 这里使用 run_cmd_live 以便实时看到日志
+        run_cmd_live(cmd)
+    except Exception as e:
+        print(f"Failed to fetch logs: {e}")
+
+def fetch_logs_on_success(task_id):
+    """如果任务失败，获取并打印日志"""
+    print("Fetching logs due to task success...")
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --line 20"
+    try:
         run_cmd_live(cmd)
     except Exception as e:
         print(f"Failed to fetch logs: {e}")
@@ -161,6 +168,7 @@ def main():
     # 5. 根据最终状态处理
     if final_status == "Success":
         print("✅ Task succeeded!")
+        fetch_logs_on_success(task_id)
         sys.exit(0)
     else:
         # 失败，获取日志

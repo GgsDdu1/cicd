@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test_A800:
+  A800_480p_t2v_1gpu:
     uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
     with:
       task_config_template: .github/commons/template/huoshan-mltask-template.yaml
@@ -17,6 +17,24 @@ jobs:
       task_name: kairos-ci-${{ github.sha }}
       pendding_timeout: 1800
       taskid_file: huoshan_taskid.txt
+      case_cmd: "bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+  A800_720p_ti2v_4gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/huoshan-mltask.yaml
+      update_config_script: .github/commons/scripts/update_huoshan_config.py
+      task_name: kairos-ci-${{ github.sha }}
+      pendding_timeout: 1800
+      taskid_file: huoshan_taskid.txt
+      case_cmd: "bash examples/multi_gpu_inference.sh example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
       VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}

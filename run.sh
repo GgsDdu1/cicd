@@ -42,4 +42,11 @@ STATUS=$(volc ml_task get --id $TASK_ID --output json | jq -r '.[0].Status')
 
 volc ml_task cancel --id t-20260304160336-mjw4d
 
-#1111
+# 单卡 480p t2v
+bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py 
+
+# 4卡 720p ti2v
+bash examples/multi_gpu_inference.sh example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 
+
+
+volc ml_task logs --task t-20260305112314-cpz4m -i worker-0 --lines 20

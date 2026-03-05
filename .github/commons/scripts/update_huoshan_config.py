@@ -19,7 +19,7 @@ except ImportError:
     import yaml
 
 
-def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, output_path=None):
+def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cmd, output_path=None):
     """主逻辑：读取 YAML，修改 Envs 和 Entrypoint，写入文件"""
     # 1. 读取 YAML 模板
     with open(yaml_path, "r", encoding="utf-8") as f:
@@ -37,6 +37,9 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, output_
         envs.append({"Name": "https_proxy", "Value": https_proxy})
     if commit_id:
         envs.append({"Name": "commit_id", "Value": commit_id})
+    if case_cmd:
+        envs.append({"Name": "case_cmd", "Value": case_cmd})
+
 
     for env in envs:
         data["Envs"] = [e for e in data["Envs"] if e.get("Name") != env["Name"]]
@@ -65,7 +68,9 @@ def main():
     https_proxy = os.environ.get('HTTPS_PROXY')
     commit_id = os.environ.get('COMMIT_ID')
     output_file = os.environ.get('OUTPUT_FILE')
-    
+    case_cmd = os.environ.get('CASE_CMD')
+
+
     update_yaml(
         yaml_path=template_file,
         cmd_path=cmd_file,
@@ -73,6 +78,7 @@ def main():
         https_proxy=https_proxy,
         commit_id = commit_id,
         output_path=output_file,
+        case_cmd=case_cmd
     )
 
 

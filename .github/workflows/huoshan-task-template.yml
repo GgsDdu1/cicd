@@ -25,6 +25,9 @@ on:
       taskid_file:
         required: true
         type: string
+      case_cmd:
+        required: true
+        type: string
     secrets:
       VOLC_ACCESS_KEY:
         required: true
@@ -75,6 +78,7 @@ jobs:
           COMMIT_ID: ${{ github.sha }}
           OUTPUT_FILE: ${{ inputs.task_config_file }}
           SCRIPT_FILE: ${{ inputs.update_config_script }}
+          CASE_CMD: ${{ inputs.case_cmd }}
         run: |
           set -e
           echo "🔧 Use ${SCRIPT_FILE} Configuring huoshan config.yaml..."
