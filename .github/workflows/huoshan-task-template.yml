@@ -28,10 +28,7 @@ on:
       remote_dir:  
         required: true
         type: string
-      case_type:
-        required: true
-        type: string
-
+        
     secrets:
       VOLC_ACCESS_KEY:
         required: true
@@ -135,5 +132,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.run_task.outputs.artifact_name }}
-          path: ${{ inputs.remote_dir }}/${{ inputs.case_type }}
+          path: ${{ inputs.remote_dir }}
       

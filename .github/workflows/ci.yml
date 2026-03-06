@@ -8,17 +8,16 @@ on:
 
 jobs:
   A800_480p_t2v_1gpu:
-    uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
+    uses: ./.github/workflows/huoshan-task-template.yml
     with:
       task_config_template: .github/commons/template/huoshan-mltask-template.yaml
       task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
-      task_config_file: .github/commons/huoshan-mltask.yaml
-      task_name: kairos-ci-480p_t2v_1gpu-${{ github.sha }}
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
       pendding_timeout: 7200
-      taskid_file: huoshan_taskid.txt
+      taskid_file: ${{ github.job }}_taskid.txt
       case_cmd: "bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
-      remote_dir: "kairos-ci/${{ github.sha }}/480p_1gpu/"
-      case_type: "t2v"
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
       VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
@@ -27,19 +26,132 @@ jobs:
       HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
       AOSS_AK:  ${{ secrets.AOSS_AK }}
       AOSS_SK:  ${{ secrets.AOSS_SK }}
-
-  A800_720p_ti2v_4gpu:
-    uses: ./.github/workflows/huoshan-task-template.yml  # 模板文件路径
+  A800_480p_t2v_4gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
     with:
       task_config_template: .github/commons/template/huoshan-mltask-template.yaml
       task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
-      task_config_file: .github/commons/huoshan-mltask.yaml
-      task_name: kairos-ci-720p_ti2v_4gpu-${{ github.sha }}
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
       pendding_timeout: 7200
-      taskid_file: huoshan_taskid.txt
-      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
-      remote_dir: "kairos-ci/${{ github.sha }}/720p_4gpu/"
-      case_type: "ti2v"
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py 4 "
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  A800_480p_ti2v_1gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/inference.sh examples/example_ti2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  A800_480p_ti2v_4gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v_480P.json .github/test/configs/kairos_4b_config_DMD.py 4 "
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  
+  A800_720p_t2v_1gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/inference.sh  examples/example_t2v.json .github/test/configs/kairos_4b_config_DMD.py"
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  A800_720p_t2v_8gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_t2v.json .github/test/configs/kairos_4b_config_DMD.py 8 "
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  A800_720p_ti2v_1gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py"
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
+    secrets:
+      VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
+      VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
+      REGION: ${{ secrets.REGION }}
+      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
+      AOSS_AK:  ${{ secrets.AOSS_AK }}
+      AOSS_SK:  ${{ secrets.AOSS_SK }}
+  A800_720p_ti2v_8gpu:
+    uses: ./.github/workflows/huoshan-task-template.yml
+    with:
+      task_config_template: .github/commons/template/huoshan-mltask-template.yaml
+      task_cmd_file: .github/commons/scripts/huoshan_cmd.sh
+      task_config_file: .github/commons/${{ github.job }}-mltask.yaml
+      task_name: kairos-ci-${{ github.job }}-${{ github.sha }}
+      pendding_timeout: 7200
+      taskid_file: ${{ github.job }}_taskid.txt
+      case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 8 "
+      remote_dir: "kairos-ci/${{ github.sha }}/${{ github.job }}/"
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
       VOLC_SECRET_KEY: ${{ secrets.VOLC_SECRET_KEY }}
