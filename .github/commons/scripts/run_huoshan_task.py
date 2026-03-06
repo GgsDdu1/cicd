@@ -124,7 +124,7 @@ def fetch_logs_on_success(task_id):
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task success...")
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines 300 | python {script_dir}/filter_huoshan_logs.py"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines 400 | python {script_dir}/filter_huoshan_logs.py"
     try:
         run_cmd_live(cmd)
     except Exception as e:

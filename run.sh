@@ -57,4 +57,3 @@ wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads
 chmod +x ads-cli
 mv ads-cli /usr/bin/
 
-ads-cli cp output/ s3://019CC0FD7C017EC9B5272370FDDAD388:019CC0FD7C017EBB8C0AA8C38C3A6A2D@kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn/$commit_id

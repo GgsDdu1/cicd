@@ -27,11 +27,12 @@ def main():
     ak = os.environ.get('AOSS_AK')
     sk = os.environ.get('AOSS_SK')
     case_type= os.environ.get("CASE_TYPE")
-    remote_endpoint = "kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn"
-
+    remote_endpoint = "white-bucket.aoss.cn-sh-01b.sensecoreapi-oss.cn"
+    if remote_dir.endswith("/"):
+        remote_dir = remote_dir[:-1]
     run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
-    run_cmd_live(f"mkdir output || true && ./ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
+    run_cmd(f"mkdir output || true && ./ads-cli cp --quiet s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
     
 
 if __name__ == "__main__":

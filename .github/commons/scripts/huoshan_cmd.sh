@@ -20,6 +20,6 @@ ls output -alh
 wget -q https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli
 chmod +x ads-cli
 mv ads-cli /usr/bin/
-remote_endpoint="kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn"
-ads-cli cp output/* s3://$ak:$sk@$remote_endpoint/$remote_dir
+remote_endpoint="white-bucket.aoss.cn-sh-01b.sensecoreapi-oss.cn"
+ads-cli cp --quiet output/* s3://$ak:$sk@$remote_endpoint/$remote_dir
 echo "Upload output to $remote_dir..."
