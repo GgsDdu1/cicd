@@ -32,7 +32,7 @@ def main():
         remote_dir = remote_dir[:-1]
     run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
-    run_cmd(f"mkdir output || true && ./ads-cli cp --quiet s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
+    run_cmd(f"mkdir output || true && ./ads-cli -q cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
     
 
 if __name__ == "__main__":
