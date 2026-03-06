@@ -17,7 +17,7 @@ jobs:
       pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
       case_cmd: "bash examples/inference.sh examples/example_t2v_480P.json .github/test/configs/kairos_4b_config_DMD.py "
-      remote_dir: "${{ github.sha }}/480p_1gpu/"
+      remote_dir: "kairos-ci/${{ github.sha }}/480p_1gpu/"
       case_type: "t2v"
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
@@ -38,7 +38,7 @@ jobs:
       pendding_timeout: 7200
       taskid_file: huoshan_taskid.txt
       case_cmd: "bash examples/multi_gpu_inference.sh examples/example_ti2v.json .github/test/configs/kairos_4b_config_DMD.py 4 "
-      remote_dir: "${{ github.sha }}/720p_4gpu/"
+      remote_dir: "kairos-ci/${{ github.sha }}/720p_4gpu/"
       case_type: "ti2v"
     secrets:
       VOLC_ACCESS_KEY: ${{ secrets.VOLC_ACCESS_KEY }}
