@@ -12,9 +12,6 @@ on:
       task_config_file:
         required: true
         type: string
-      update_config_script:
-        required: true
-        type: string
       task_name:
         required: true
         type: string
@@ -28,6 +25,13 @@ on:
       case_cmd:
         required: true
         type: string
+      remote_dir:  
+        required: true
+        type: string
+      case_type:
+        required: true
+        type: string
+
     secrets:
       VOLC_ACCESS_KEY:
         required: true
@@ -39,6 +43,11 @@ on:
         required: true
       HTTP_PROXY:
         required: true
+      AOSS_AK:
+        required: true
+      AOSS_SK:
+        required: true
+
 
 jobs:
   run-task:
@@ -77,12 +86,14 @@ jobs:
           HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
           COMMIT_ID: ${{ github.sha }}
           OUTPUT_FILE: ${{ inputs.task_config_file }}
-          SCRIPT_FILE: ${{ inputs.update_config_script }}
           CASE_CMD: ${{ inputs.case_cmd }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          AOSS_AK: ${{ secrets.AOSS_AK }}
+          AOSS_SK: ${{ secrets.AOSS_SK }}
         run: |
           set -e
-          echo "🔧 Use ${SCRIPT_FILE} Configuring huoshan config.yaml..."
-          python ${SCRIPT_FILE}
+          echo "🔧 Configuring huoshan config.yaml..."
+          python .github/commons/scripts/update_huoshan_config.py
 
       - name: Run huoshan task with Python
         env:
@@ -91,8 +102,13 @@ jobs:
           PENDDING_TIME_OUT: ${{ inputs.pendding_timeout }}
           INTERVAL: 30
           TASKID_FILE: ${{ inputs.taskid_file }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          AOSS_AK: ${{ secrets.AOSS_AK }}
+          AOSS_SK: ${{ secrets.AOSS_SK }}
+          CASE_TYPE: ${{ inputs.case_type }}
         run: |
           python .github/commons/scripts/run_huoshan_task.py
+          python .github/commons/scripts/download_remote.py
 
       - name: Cleanup on cancellation
         if: ${{ cancelled() }}
@@ -106,3 +122,10 @@ jobs:
           else
             echo "⚠️ No $TASKID_FILE found, skipping cancellation"
           fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: video
+          path: output/
+      

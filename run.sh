@@ -53,3 +53,8 @@ bash examples/multi_gpu_inference.sh example_ti2v.json .github/test/configs/kair
 volc ml_task logs --task t-20260305153254-m246n -i worker-0 --lines 300  | python .github/commons/scripts/filter_huoshan_logs.py
 
 
+wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli
+chmod +x ads-cli
+mv ads-cli /usr/bin/
+
+ads-cli cp output/ s3://019CC0FD7C017EC9B5272370FDDAD388:019CC0FD7C017EBB8C0AA8C38C3A6A2D@kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn/$commit_id

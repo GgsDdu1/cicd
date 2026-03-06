@@ -36,7 +36,8 @@ resource_map={
         }
     }
 
-def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cmd, output_path=None):
+
+def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cmd, remote_dir, aoss_ak, aoss_sk, output_path=None):
     """主逻辑：读取 YAML，修改 Envs 和 Entrypoint，写入文件"""
     # 1. 读取 YAML 模板
     with open(yaml_path, "r", encoding="utf-8") as f:
@@ -46,7 +47,7 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cm
     if "Envs" not in data or data["Envs"] is None:
         data["Envs"] = []
 
-    # 2. 构建代理列表（仅当参数非空时添加）
+    # 2. 构建环境变量
     envs = []
     if http_proxy:
         envs.append({"Name": "http_proxy", "Value": http_proxy})
@@ -56,7 +57,15 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cm
         envs.append({"Name": "commit_id", "Value": commit_id})
     if case_cmd:
         envs.append({"Name": "case_cmd", "Value": case_cmd})
+    if aoss_ak:
+        envs.append({"Name": "ak", "Value": aoss_ak})
+    if aoss_sk:
+        envs.append({"Name": "sk", "Value": aoss_sk})
 
+    if remote_dir:
+        if not remote_dir.endswith("/"):
+            remote_dir += "/"
+        envs.append({"Name": "remote_dir", "Value": remote_dir})
 
     for env in envs:
         data["Envs"] = [e for e in data["Envs"] if e.get("Name") != env["Name"]]
@@ -82,7 +91,8 @@ def update_yaml(yaml_path, cmd_path, http_proxy, https_proxy, commit_id, case_cm
     else:
         print(f"❌Unsupport gpu_num:{gpu_num}!!!")
 
-    # 4. 写入新的 YAML
+
+    # 写入新的 YAML
     output_path = output_path or yaml_path  # 默认覆盖原文件
     with open(output_path, "w", encoding="utf-8") as f:
         # 使用 safe_dump，保持字段顺序（Python 3.7+ 字典有序）
@@ -122,6 +132,9 @@ def main():
     commit_id = os.environ.get('COMMIT_ID')
     output_file = os.environ.get('OUTPUT_FILE')
     case_cmd = os.environ.get('CASE_CMD')
+    remote_dir = os.environ.get('REMOTE_DIR')
+    aoss_ak = os.environ.get('AOSS_AK')
+    aoss_sk = os.environ.get('AOSS_SK')
 
     update_yaml(
         yaml_path=template_file,
@@ -130,7 +143,10 @@ def main():
         https_proxy=https_proxy,
         commit_id = commit_id,
         output_path=output_file,
-        case_cmd=case_cmd
+        case_cmd=case_cmd,
+        remote_dir=remote_dir,
+        aoss_ak=aoss_ak,
+        aoss_sk=aoss_sk
     )
 
 
