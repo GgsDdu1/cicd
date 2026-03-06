@@ -20,7 +20,15 @@ import sys
 import time
 import json
 import subprocess
-import signal
+
+# Python 3.7+ 支持 reconfigure
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(line_buffering=True)
+else:
+    # 兼容老版本 Python：每次 print 强制 flush
+    import functools
+    print = functools.partial(print, flush=True)
+
 def run_cmd(cmd, check=True, capture_output=True):
     """执行命令，返回输出或抛出异常"""
     result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True)
@@ -30,10 +38,9 @@ def run_cmd(cmd, check=True, capture_output=True):
     return result
 
 def run_cmd_live(cmd):
-    """实时输出命令的标准输出，返回进程对象"""
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
     for line in process.stdout:
-        print(line, end='')
+        print(line, end='', flush=True)
     process.wait()
     return process.returncode
 
