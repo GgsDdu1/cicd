@@ -21,6 +21,10 @@ def main():
     sk = os.environ.get('AOSS_SK')
     case_type= os.environ.get("CASE_TYPE")
     remote_endpoint = "kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn"
+
+    run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
+    run_cmd("chmod +x ads-cli")
+    run_cmd("mv ads-cli /usr/bin/")
     run_cmd(f"mkdir output || true && ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
     
 
