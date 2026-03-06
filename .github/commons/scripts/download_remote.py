@@ -24,8 +24,7 @@ def main():
 
     run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
-    run_cmd("mv ads-cli /usr/bin/")
-    run_cmd(f"mkdir output || true && ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
+    run_cmd(f"mkdir output || true && ./ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
     
 
 if __name__ == "__main__":
