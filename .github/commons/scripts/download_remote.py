@@ -28,11 +28,13 @@ def main():
     sk = os.environ.get('AOSS_SK')
     case_type= os.environ.get("CASE_TYPE")
     remote_endpoint = "white-bucket.aoss.cn-sh-01b.sensecoreapi-oss.cn"
-    if remote_dir.endswith("/"):
-        remote_dir = remote_dir[:-1]
     run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
-    run_cmd(f"mkdir output || true && ./ads-cli -q cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
+    remote_path = os.path.join(f"s3://{ak}:{sk}@{remote_endpoint}", remote_dir, case_type)
+    local_path = os.path.join(remote_dir, case_type)
+    local_dir_path = os.path.dirname(local_path)
+    run_cmd(f"mkdir -p {local_dir_path} || true && ./ads-cli -q cp {remote_path} {local_path}")
+    run_cmd_live(f'echo "download artifacts to {local_path}"')
     
 
 if __name__ == "__main__":
