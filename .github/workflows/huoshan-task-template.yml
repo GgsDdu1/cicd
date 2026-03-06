@@ -95,7 +95,7 @@ jobs:
           echo "🔧 Configuring huoshan config.yaml..."
           python .github/commons/scripts/update_huoshan_config.py
 
-      - name: Run huoshan task with Python
+      - name: Run huoshan task
         env:
           TASK_NAME: ${{ inputs.task_name }}
           TASK_CONFIG_FILE: ${{ inputs.task_config_file }}

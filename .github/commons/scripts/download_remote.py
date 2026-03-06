@@ -12,6 +12,13 @@ def run_cmd(cmd, check=True, capture_output=True):
         sys.exit(result.returncode)
     return result
 
+def run_cmd_live(cmd):
+    """实时输出命令的标准输出，返回进程对象"""
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+    for line in process.stdout:
+        print(line, end='')
+    process.wait()
+    return process.returncode
 
 def main():
     
@@ -24,7 +31,7 @@ def main():
 
     run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
-    run_cmd(f"mkdir output || true && ./ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
+    run_cmd_live(f"mkdir output || true && ./ads-cli cp s3://{ak}:{sk}@{remote_endpoint}/{remote_dir}/{case_type} ./output")
     
 
 if __name__ == "__main__":

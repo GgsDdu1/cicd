@@ -17,7 +17,7 @@ ls output -alh
 
 # 产物上传
 # download ads-cli
-wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli
+wget -q https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli
 chmod +x ads-cli
 mv ads-cli /usr/bin/
 remote_endpoint="kairos-ci.aoss.cn-sh-01b.sensecoreapi-oss.cn"
