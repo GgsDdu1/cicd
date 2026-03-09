@@ -12,7 +12,7 @@ export PYTHONPATH=${CODE_DIR}:$PYTHONPATH
 python ${CODE_DIR}/kairos/third_party/manage_libs.py
 
 torchrun --nnodes=1  --master_port 29556 --nproc-per-node=1 \
-    ${CURR_FILE_DIR}/examples/inference.py \
+    ${CURR_FILE_DIR}/inference.py \
         --input_file ${INPUT_FILE} \
         --config_file ${CONFIG_FILE}
 
