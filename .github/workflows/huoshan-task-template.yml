@@ -112,7 +112,7 @@ jobs:
           python .github/commons/scripts/run_huoshan_task.py
           python .github/commons/scripts/download_remote.py
           pip install opencv-python numpy --index-url https://pypi.tuna.tsinghua.edu.cn/simple
-          python .github/commons/scripts/video_checker.py --gt ".github/gt_resource/${JOB_NAME}/output.mp4" --gen ${{ inputs.remote_dir }}
+          python .github/commons/scripts/video_checker.py --gt ".github/gt_resource/${JOB_NAME}/output.mp4" --gen "${{ inputs.remote_dir }}/output.mp4"
           
       - name: Cleanup on cancellation
         if: ${{ cancelled() }}
