@@ -127,11 +127,29 @@ def fetch_logs_on_failure(task_id):
     except Exception as e:
         print(f"Failed to fetch logs: {e}")
 
+import re
+
+def extract_gpu_count(model_name: str) -> int:
+    """
+    从模型名称中提取 GPU 数量，例如 "A800_720p_ti2v_8gpu" 返回 8。
+    Args:
+        model_name (str): 包含 GPU 信息的字符串，通常格式如 "{gpu型号}_分辨率_任务_{数字}gpu"
+    Returns:
+        int: GPU 数量(匹配不到默认返回1)
+    """
+    match = re.search(r'(\d+)gpu', model_name)
+    if match:
+        return int(match.group(1))
+    else:
+        print(f"无法从字符串 '{model_name}' 中提取 GPU 数量，请确保包含如 '8gpu' 的格式，默认返回1")
+        return 1
+
 def fetch_logs_on_success(task_id):
     """如果任务失败，获取并打印日志"""
-    print("Fetching logs due to task success...")
+    print("Performance results...")
+    gpu_num = extract_gpu_count(task_id)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines 400 | python {script_dir}/filter_huoshan_logs.py"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines {100*gpu_num} | python {script_dir}/filter_huoshan_logs.py"
     try:
         run_cmd_live(cmd)
     except Exception as e:

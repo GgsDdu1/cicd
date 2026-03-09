@@ -76,6 +76,17 @@ def extract_max_memory_allocated(lines):
     max_memorys.sort(key=lambda x: x[0])
     return max_memorys
 
+def extract_cost_times(lines):
+    cost_times = []
+    for line in lines:
+        if " infer time: " in line:
+            match = re.search(r'\[GPU (\d+)\]', line)
+            if match:
+                gpu_id = int(match.group(1))
+                cost_times.append((gpu_id, line.rstrip()))
+    cost_times.sort(key=lambda x: x[0])
+    return cost_times
+
 def main():
     lines = sys.stdin.readlines()
 
@@ -83,6 +94,7 @@ def main():
     gpu_stat_blocks = extract_gpu_stat_blocks(lines)
     tables = extract_tables(lines)
     memorys = extract_max_memory_allocated(lines)
+    times = extract_cost_times(lines)
 
     # 输出
     # 1. GPU 显存统计块
@@ -91,6 +103,8 @@ def main():
         print()  # 空行分隔
 
     for device_id, table_lines in tables:
+        if len(times) == len(times):
+            print(times[device_id][1])
         if len(memorys) == len(tables):
             print(memorys[device_id][1])
         print("\n".join(table_lines))

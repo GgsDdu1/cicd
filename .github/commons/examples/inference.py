@@ -8,10 +8,20 @@ import mmengine
 from mmengine.dist import init_dist, get_dist_info
 
 import torch.distributed as dist
-from kairos.apis.builder import build_model_pipeline
-from kairos.modules.utils.prompt_rewriter import PromptRewriter
 import torch
 from PIL import Image
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
+# 将项目根目录添加到 Python 模块搜索路径（确保优先）
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# 现在可以正常导入 kairos
+from kairos.apis.builder import build_model_pipeline
+from kairos.apis.builder import build_model_pipeline
+from kairos.modules.utils.prompt_rewriter import PromptRewriter
+
 from kairos.modules.utils import save_video, save_image, parallel_state, FLAGS_KAIROS_PLAT_DEVICE
 
 def parse_args():
@@ -207,8 +217,8 @@ if __name__ == '__main__':
 
     elapsed = time.perf_counter() - start_time
 
-    print(f"infer time: {elapsed:.4f}s")
-    print('infer done')
+    print(f"[GPU {local_rank}] infer time (s): {elapsed:.4f}")
+    print(f"[GPU {local_rank}] infer done")
 
     # save video
     if rank == 0:

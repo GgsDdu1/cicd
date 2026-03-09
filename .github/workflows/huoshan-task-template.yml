@@ -3,6 +3,9 @@ name: HuoShan Task Template
 on:
   workflow_call:
     inputs:
+      job_name:
+        required: true
+        type: string
       task_config_template:
         required: true
         type: string
@@ -104,17 +107,12 @@ jobs:
           AOSS_AK: ${{ secrets.AOSS_AK }}
           AOSS_SK: ${{ secrets.AOSS_SK }}
           CASE_TYPE: ${{ inputs.case_type }}
+          JOB_NAME:  ${{ inputs.job_name }}
         run: |
           python .github/commons/scripts/run_huoshan_task.py
           python .github/commons/scripts/download_remote.py
-          # 生成artifact name
-          task_name="$TASK_NAME"
-          # 去掉前缀 "kairos-ci-"
-          temp="${task_name#kairos-ci-}"
-          # 去掉最后一个短横线及其后的内容（即去掉 -<sha>）
-          artifact_name="${temp%-*}"
-          echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
-
+          python .github/commons/scripts/video_checker.py --gt ".github/gt_resource/${JOB_NAME}/output.mp4" --gen ${{ inputs.remote_dir }}
+          
       - name: Cleanup on cancellation
         if: ${{ cancelled() }}
         env:
@@ -131,6 +129,6 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.run_task.outputs.artifact_name }}
+          name: ${{ inputs.job_name }}
           path: ${{ inputs.remote_dir }}
       

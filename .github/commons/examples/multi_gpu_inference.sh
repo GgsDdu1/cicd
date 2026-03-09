@@ -1,11 +1,11 @@
 #!/bin/bash
+CURR_FILE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-INPUT_FILE=${1:-"examples/example_t2v.json"}
-CONFIG_FILE=${2:-"kairos/configs/kairos_4b_config_DMD.py"}
+INPUT_FILE=${1:-"${CURR_FILE_DIR}/example_t2v.json"}
+CONFIG_FILE=${2:-"${CURR_FILE_DIR}/configs/kairos_4b_config_DMD.py"}
 GPU=${3:-"4"}
 
-CURR_FILE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CODE_DIR="$(cd "${CURR_FILE_DIR}/.." && pwd)"
+CODE_DIR="$(cd "${CURR_FILE_DIR}/../../.." && pwd)"
 
 
 cd $CODE_DIR
@@ -21,7 +21,7 @@ python ${CODE_DIR}/kairos/third_party/manage_libs.py
 # - Other configurations (e.g., 6 GPUs, multi-node) are not supported yet.
 
 torchrun --nnodes=1  --master_port 29556 --nproc-per-node=$GPU \
-    ${CODE_DIR}/examples/inference.py \
+    ${CURR_FILE_DIR}/inference.py \
         --input_file ${INPUT_FILE} \
         --config_file ${CONFIG_FILE}
 
