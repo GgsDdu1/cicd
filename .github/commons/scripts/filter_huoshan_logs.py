@@ -9,7 +9,7 @@ def extract_gpu_stat_blocks(lines):
     while i < n:
         line = lines[i]
         # 匹配 "GPU X 显存统计：" 行
-        m = re.match(r'GPU\s+(\d+)\s+显存统计：', line)
+        m = re.match(r'\[GPU\s+(\d+)\]\s+显存统计：', line)
         if m:
             device_id = int(m.group(1))
             block = [line.rstrip()]
@@ -79,7 +79,7 @@ def extract_max_memory_allocated(lines):
 def extract_cost_times(lines):
     cost_times = []
     for line in lines:
-        if " infer time: " in line:
+        if " infer time (s): " in line:
             match = re.search(r'\[GPU (\d+)\]', line)
             if match:
                 gpu_id = int(match.group(1))

@@ -192,7 +192,13 @@ class VideoConsistencyChecker:
             raise RuntimeError("未读取到任何帧，对比失败")
 
         avg_ssim = np.mean(ssim_scores)
-        avg_psnr = np.mean([p for p in psnr_scores if p != float('inf')])  # 忽略无穷大的PSNR
+        # 过滤出有限 PSNR 值
+        finite_psnr = [p for p in psnr_scores if p != float('inf')]
+
+        if finite_psnr:
+            avg_psnr = np.mean(finite_psnr)
+        else:
+            avg_psnr = float('inf')   # 所有帧都完美，平均 PSNR 为无穷大
 
         pass_flag = avg_ssim >= self.ssim_threshold and avg_psnr >= self.psnr_threshold
 

@@ -70,7 +70,7 @@ def print_gpu_memory(device_id=0):
     # 3. GPU 总显存
     total = torch.cuda.get_device_properties(device_id).total_memory / 1024**3
     
-    print(f"GPU {device_id} 显存统计：")
+    print(f"[GPU {device_id}] 显存统计：")
     print(f"  实际使用：{used:.2f} GB")
     print(f"  缓存显存：{cached:.2f} GB")
     print(f"  总显存：{total:.2f} GB")
@@ -234,5 +234,5 @@ if __name__ == '__main__':
 
     if os.getenv("DETAILED_PERF_ENABLE", False):
         torch.cuda.synchronize()
-        print(f"[GPU {local_rank}] max_memory_allocated (GB):", torch.cuda.max_memory_allocated() / 1024**3)
+        print(f"[GPU {local_rank}] max_memory_allocated (GB): {torch.cuda.max_memory_allocated() / 1024**3:.4f}")
         print(torch.cuda.memory_summary(device=None, abbreviated=False))
