@@ -147,7 +147,7 @@ def extract_gpu_count(model_name: str) -> int:
 def fetch_logs_on_success(task_id):
     """如果任务失败，获取并打印日志"""
     print("Performance results...")
-    gpu_num = extract_gpu_count(task_id)
+    gpu_num = extract_gpu_count(os.environ.get('TASK_NAME'))
     script_dir = os.path.dirname(os.path.abspath(__file__))
     cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines {100*gpu_num} | python {script_dir}/filter_huoshan_logs.py"
     try:

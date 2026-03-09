@@ -103,7 +103,7 @@ def main():
         print()  # 空行分隔
 
     for device_id, table_lines in tables:
-        if len(times) == len(times):
+        if len(times) == len(tables):
             print(times[device_id][1])
         if len(memorys) == len(tables):
             print(memorys[device_id][1])

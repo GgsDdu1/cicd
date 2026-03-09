@@ -2,23 +2,9 @@ import os
 import argparse
 import math
 from typing import Tuple, Dict, Union, List
-import subprocess
-import sys
-# 尝试导入 cv2，若失败则自动安装
-try:
-    import cv2
-except ImportError:
-    print("cv2 not found, installing...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "opencv-python", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"])
-    import cv2
+import cv2
+import numpy as np
 
-# 尝试导入 numpy，若失败则自动安装
-try:
-    import numpy as np
-except ImportError:
-    print("numpy not found, installing...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "numpy", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"])
-    import numpy as np
 
 class VideoConsistencyChecker:
     """
