@@ -2,6 +2,14 @@
 import sys
 import re
 
+def trim_before_gpu(s):
+    idx = s.find("[GPU")
+    if idx != -1:
+        return s[idx:]
+    else:
+        # 未找到时返回原字符串
+        return s
+
 def extract_gpu_stat_blocks(lines):
     blocks = []
     i = 0
@@ -72,7 +80,7 @@ def extract_max_memory_allocated(lines):
             match = re.search(r'\[GPU (\d+)\]', line)
             if match:
                 gpu_id = int(match.group(1))
-                max_memorys.append((gpu_id, line.rstrip()))
+                max_memorys.append((gpu_id, trim_before_gpu(line.rstrip())))
     max_memorys.sort(key=lambda x: x[0])
     return max_memorys
 
@@ -83,7 +91,7 @@ def extract_cost_times(lines):
             match = re.search(r'\[GPU (\d+)\]', line)
             if match:
                 gpu_id = int(match.group(1))
-                cost_times.append((gpu_id, line.rstrip()))
+                cost_times.append((gpu_id, trim_before_gpu(line.rstrip())))
     cost_times.sort(key=lambda x: x[0])
     return cost_times
 

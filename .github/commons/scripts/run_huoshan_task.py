@@ -149,7 +149,7 @@ def fetch_logs_on_success(task_id):
     print("Performance results...")
     gpu_num = extract_gpu_count(os.environ.get('TASK_NAME'))
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines {100*gpu_num} | python {script_dir}/filter_huoshan_logs.py"
+    cmd = f"volc ml_task logs --task {task_id} -i worker-0 --lines {100*gpu_num} | python {script_dir}/filter_logs.py"
     try:
         run_cmd_live(cmd)
     except Exception as e:

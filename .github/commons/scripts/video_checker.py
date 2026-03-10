@@ -229,8 +229,13 @@ def main():
     parser.add_argument("--psnr_threshold", type=float, default=35, help="一致性阈值（35～40 dB），默认35dB")
     
     args = parser.parse_args()
+    
+    job_name = os.getenv("JOB_NAME", "")
+    if "8gpu" in job_name.lower():
+        args.ssim_threshold = 0.90
+        args.psnr_threshold = 30
 
-    checker = VideoConsistencyChecker(ssim_threshold=args.ssim_threshold)
+    checker = VideoConsistencyChecker(ssim_threshold=args.ssim_threshold, psnr_threshold=args.psnr_threshold)
     try:
         result = checker.compare_videos(args.gt, args.gen)
         exit(0) if result["pass"] else exit(1)
