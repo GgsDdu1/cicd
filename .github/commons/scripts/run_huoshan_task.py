@@ -2,17 +2,20 @@
 """
 Volcano Engine ML Task 管理脚本
 功能：
-- 提交任务前，检查是否存在同名且运行中的任务，若有则取消。
-- 提交任务，获取 Task ID。
+- 提交任务前，检查是否存在同名任务：
+  - 存在最新的同名任务且状态为(Success, Running, Initialized, Queue, Staging) → 复用
+  - 存在同名任务但状态为其他 → 取消该任务并提交新任务
+  - 无同名任务 → 提交新任务
 - 将TASK_ID写入文件task_id.txt中
 - 等待任务进入 Running 状态（超时控制）。
-- 实时流式输出日志（带重试，处理命令 panic）。
+- 实时流式输出日志。
 - 任务结束后检查最终状态，成功则退出 0，否则退出 1。
 环境变量：
   TASK_NAME          : 任务名称
-  TASK_CONFIG_FILE: 任务配置文件路径
-  PENDDING_TIME_OUT    : 等待 Running 的超时时间（秒，默认 1800）
+  TASK_CONFIG_FILE   : 任务配置文件路径
+  PENDDING_TIME_OUT  : 等待 Running 的超时时间（秒，默认 1800）
   INTERVAL           : 状态检查间隔（秒，默认 30）
+  TASKID_FILE        : 保存Task ID的文件路径（必填）
 """
 
 import os
@@ -56,7 +59,7 @@ def get_task_status(task_id):
 
 def cancel_task(task_id):
     """取消任务"""
-    print(f"Cancelling existing task {task_id}...")
+    print(f"Cancelling task {task_id}...")
     run_cmd(f"volc ml_task cancel --id {task_id}", check=False)
 
 def submit_task(config_file, task_name):
@@ -78,6 +81,7 @@ def wait_for_running(task_id, timeout, interval):
         elapsed = time.time() - start_time
         if elapsed > timeout:
             print(f"⏰ Timeout reached after {timeout}s. Task did not become Running.")
+            print(f"❌ Task failed to start, current status: {get_task_status(task_id)}")
             cancel_task(task_id)
             sys.exit(1)
 
@@ -95,6 +99,8 @@ def wait_for_running(task_id, timeout, interval):
         elif status in ("Killing", "Failed", "Killed", "Exception"):
             print(f"❌ Task failed with status: {status}")
             sys.exit(1)
+        elif status == "Success":
+            print(f"✅ Task is {status}")
         else:
             time.sleep(interval)
 
@@ -109,7 +115,7 @@ def wait_for_completion(task_id, interval):
 
         print(f"Current status: {status}")
 
-        # 终态判断：Success, Failed, Killed, Exception, Killing? Killing是过渡状态，可能最终变为Killed。
+        # 终态判断：Success, Failed, Killed, Exception
         if status in ("Success", "Failed", "Killed", "Exception"):
             return status
         elif status == "Killing":
@@ -137,6 +143,9 @@ def extract_gpu_count(model_name: str) -> int:
     Returns:
         int: GPU 数量(匹配不到默认返回1)
     """
+    if model_name is None:
+        print("空字符串，无法提取 GPU 数量，默认返回1")
+        return 1
     match = re.search(r'(\d+)gpu', model_name)
     if match:
         return int(match.group(1))
@@ -145,7 +154,7 @@ def extract_gpu_count(model_name: str) -> int:
         return 1
 
 def fetch_logs_on_success(task_id):
-    """如果任务失败，获取并打印日志"""
+    """任务成功后获取性能日志"""
     print("Performance results...")
     gpu_num = extract_gpu_count(os.environ.get('TASK_NAME'))
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -169,29 +178,65 @@ def main():
     interval = int(os.environ.get('INTERVAL', 30))
     taskid_file = os.environ.get('TASKID_FILE')
 
-    if not task_name or not config_file:
-        print("Error: TASK_NAME and TASK_CONFIG_FILE must be set.")
+    if not task_name or not config_file or not taskid_file:
+        print("Error: TASK_NAME, TASK_CONFIG_FILE and TASKID_FILE must be set.")
         sys.exit(1)
 
-    # 1. 检查并取消已存在的同名运行中任务
+    # 定义可复用的任务状态列表
+    REUSABLE_STATUSES = ('Success', 'Running', 'Initialized', 'Queue', 'Staging')
+    
+    # 1. 检查同名任务（所有状态）
     print(f"Checking for existing tasks with name: {task_name}")
-    result = run_cmd(f"volc ml_task list --output json", check=True)
+    result = run_cmd(f"volc ml_task list --status {','.join(REUSABLE_STATUSES)} --limit 200 --output json ", check=True)
     tasks = json.loads(result.stdout)
-    running_tasks = [t for t in tasks if t.get('JobName') == task_name and t.get('Status') in ('Running', 'Initialized', 'Queue', 'Staging')]
-    for t in running_tasks:
-        cancel_task(t['JobId'])
+    
+    # 筛选同名任务并按创建时间排序（最新的在前）
+    same_name_tasks = sorted(
+        [t for t in tasks if t.get('JobName') == task_name],
+        key=lambda x: x.get('CreateTime', ''),
+        reverse=True
+    )
 
-    # 2. 提交新任务
-    task_id = submit_task(config_file, task_name)
+    task_id = None
+    if same_name_tasks:
+        # 获取最新的同名任务
+        latest_task = same_name_tasks[0]
+        task_id = latest_task['JobId']
+        task_status = latest_task.get('Status', 'Unknown')
+        
+        print(f"Found existing task: ID={task_id}, Status={task_status}")
+        
+        if task_status in REUSABLE_STATUSES:
+            # 状态符合要求，复用该任务
+            print(f"Task status '{task_status}' is reusable, reusing task {task_id}")
+        else:
+            # 状态不符合，取消任务并重新提交
+            print(f"Task status '{task_status}' is not reusable, cancelling and submitting new task")
+            cancel_task(task_id)
+            task_id = submit_task(config_file, task_name)
+    else:
+        # 无同名任务，提交新任务
+        print("No existing task found, submitting new task")
+        task_id = submit_task(config_file, task_name)
+
+    # 写入task id到文件
     write_taskid_to_file(task_id, taskid_file)
+    
+    current_status = get_task_status(task_id)
+    
+    # 等待 Running
+    if current_status not in ("Success", "Failed", "Killed", "Exception"):
+        wait_for_running(task_id, timeout, interval)
+    else:
+        print(f"Task is already in final status: {current_status}, skip waiting for Running")
 
-    # 3. 等待 Running
-    wait_for_running(task_id, timeout, interval)
+    # 等待任务完成（如果任务还没到终态）
+    if current_status not in ("Success", "Failed", "Killed", "Exception"):
+        final_status = wait_for_completion(task_id, interval)
+    else:
+        final_status = current_status
 
-    # 4. 等待任务完成
-    final_status = wait_for_completion(task_id, interval)
-
-    # 5. 根据最终状态处理
+    # 根据最终状态处理
     if final_status == "Success":
         print("✅ Task succeeded!")
         fetch_logs_on_success(task_id)

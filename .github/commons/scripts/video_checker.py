@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import argparse
 import math
@@ -14,7 +15,7 @@ class VideoConsistencyChecker:
         比较两个视频的 PSNR, SSIM   
     """
     
-    def __init__(self, ssim_threshold: float = 0.93, psnr_threshold: int = 35):
+    def __init__(self, ssim_threshold:float = 0.93, psnr_threshold:int = 35):
         """
         初始化校验器
         :param ssim_threshold: 一致性阈值（0-1），默认93%
