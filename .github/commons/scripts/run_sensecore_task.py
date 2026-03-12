@@ -218,7 +218,7 @@ def main():
 
     config = read_config(config_file)
     # 定义可复用的任务状态列表
-    REUSABLE_STATUSES = ('FAILED','SUCCEEDED', 'RUNNING', 'PENDING', 'QUEUEING', 'INIT', 'STARTING')
+    REUSABLE_STATUSES = ('SUCCEEDED', 'RUNNING', 'PENDING', 'QUEUEING', 'INIT', 'STARTING')
     
     # 1. 检查同名任务（所有状态）
     print(f"Checking for existing tasks with name: {task_name}")

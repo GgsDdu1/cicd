@@ -69,8 +69,6 @@ jobs:
       case_cmd: ${{ matrix.case_cmd }}
       remote_dir: "kairos-ci/${{ github.sha }}/${{ matrix.job_name }}/"
     secrets:
-      HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
-      HTTPS_PROXY: ${{ secrets.HTTPS_PROXY }}
       AOSS_AK:  ${{ secrets.AOSS_AK }}
       AOSS_SK:  ${{ secrets.AOSS_SK }}
       ZONE:  ${{ secrets.ZONE }}
