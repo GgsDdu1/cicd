@@ -26,7 +26,8 @@ def main():
     ak = os.environ.get('AOSS_AK')
     sk = os.environ.get('AOSS_SK')
     remote_endpoint = "white-bucket.aoss.cn-sh-01b.sensecoreapi-oss.cn"
-    run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
+    if not os.path.exists("./ads-cli"):
+        run_cmd("wget https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli")
     run_cmd("chmod +x ads-cli")
     remote_path = os.path.join(f"s3://{ak}:{sk}@{remote_endpoint}", remote_dir)
     local_path = os.path.join(remote_dir)
