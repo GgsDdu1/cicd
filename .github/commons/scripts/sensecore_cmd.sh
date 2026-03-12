@@ -2,6 +2,9 @@
 set -e
 set -o pipefail  # 确保管道中前面的命令失败会导致整体失败
 
+export http_proxy
+export https_proxy
+
 # 定义产物上传函数
 upload_artifacts() {
     local src_dir="$1"

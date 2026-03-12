@@ -47,10 +47,23 @@ def update_env(env: str, new_envs: str) -> str:
     # 将字典转换回字符串
     return ','.join(f"{k}:{v}" for k, v in env_dict.items())
 
-def update_yaml(yaml_path, cmd_path, commit_id, case_cmd, remote_dir, aoss_ak, aoss_sk, output_path=None):
+def update_yaml():
     """主逻辑：读取 YAML，修改 Envs 和 Command，写入文件"""
+    
+    # 读取环境变量
+    template_file = os.environ.get('TEMPLATE_FILE')
+    cmd_file = os.environ.get('CMD_FILE')
+    commit_id = os.environ.get('COMMIT_ID')
+    output_file = os.environ.get('OUTPUT_FILE')
+    case_cmd = os.environ.get('CASE_CMD')
+    remote_dir = os.environ.get('REMOTE_DIR')
+    aoss_ak = os.environ.get('AOSS_AK')
+    aoss_sk = os.environ.get('AOSS_SK')
+    http_proxy = os.environ.get('HTTP_PROXY')
+    https_proxy = os.environ.get('HTTPS_PROXY')
+
     # 1. 读取 YAML 模板
-    with open(yaml_path, "r", encoding="utf-8") as f:
+    with open(template_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     # 确保 Envs 字段存在且为string
@@ -59,6 +72,10 @@ def update_yaml(yaml_path, cmd_path, commit_id, case_cmd, remote_dir, aoss_ak, a
 
     # 2. 构建环境变量
     new_envs = []
+    if http_proxy:
+        new_envs.append(f"http_proxy:'{http_proxy}'")
+    if https_proxy:
+        new_envs.append(f"https_proxy:'{https_proxy}'")
     if commit_id:
         new_envs.append(f"commit_id:'{commit_id}'")
     if aoss_ak:
@@ -72,7 +89,7 @@ def update_yaml(yaml_path, cmd_path, commit_id, case_cmd, remote_dir, aoss_ak, a
     new_envs_string = ",".join(new_envs)
     data["Env"] = f'{update_env(data["Env"], new_envs_string)}'
     # 3. 读取 cmd.sh 内容，作为 Entrypoint
-    with open(cmd_path, "r", encoding="utf-8") as f:
+    with open(cmd_file, "r", encoding="utf-8") as f:
         cmd_content = f.read()
     
     # 因为大装置acp环境变量不支持带空格的value,所以直接替换到command中去
@@ -89,12 +106,12 @@ def update_yaml(yaml_path, cmd_path, commit_id, case_cmd, remote_dir, aoss_ak, a
 
 
     # 写入新的 YAML
-    output_path = output_path or yaml_path  # 默认覆盖原文件
-    with open(output_path, "w", encoding="utf-8") as f:
+    output_file = output_file or template_file  # 默认覆盖原文件
+    with open(output_file, "w", encoding="utf-8") as f:
         # 使用 safe_dump，保持字段顺序（Python 3.7+ 字典有序）
         yaml.safe_dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
-    print(f"✅ YAML 文件已更新: {output_path}")
+    print(f"✅ YAML 文件已更新: {output_file}")
 
 import re
 
@@ -120,22 +137,14 @@ def get_gpu_num(case_cmd: str) -> int:
         return 1
 
 def main():
-    # 读取环境变量
-    template_file = os.environ.get('TEMPLATE_FILE')
-    cmd_file = os.environ.get('CMD_FILE')
-    commit_id = os.environ.get('COMMIT_ID')
-    output_file = os.environ.get('OUTPUT_FILE')
-    case_cmd = os.environ.get('CASE_CMD')
-    remote_dir = os.environ.get('REMOTE_DIR')
-    aoss_ak = os.environ.get('AOSS_AK')
-    aoss_sk = os.environ.get('AOSS_SK')
+
 
 
     update_yaml(
-        yaml_path=template_file,
-        cmd_path=cmd_file,
+        template_file=template_file,
+        cmd_file=cmd_file,
         commit_id = commit_id,
-        output_path=output_file,
+        output_file=output_file,
         case_cmd=case_cmd,
         remote_dir=remote_dir,
         aoss_ak=aoss_ak,
