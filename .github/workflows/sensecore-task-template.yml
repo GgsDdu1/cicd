@@ -36,7 +36,6 @@ on:
         type: string
         default: product-engineering-workspace
 
-        
     secrets:
       ZONE:
         required: true
@@ -74,7 +73,7 @@ jobs:
           secret_key: ${{ secrets.AOSS_SK }}
           zone: ${{ secrets.ZONE }}
 
-      - name: Update huoshan config.yaml
+      - name: Update sensecore config.yaml
         shell: bash
         env:
           TEMPLATE_FILE: ${{ inputs.task_config_template }}
@@ -91,7 +90,7 @@ jobs:
           echo "🔧 Configuring sensecore config.yaml..."
           python .github/commons/scripts/update_sensecore_config.py
 
-      - name: Run huoshan task
+      - name: Run Sensecore task
         id: run_task
         env:
           TASK_NAME: ${{ inputs.task_name }}
