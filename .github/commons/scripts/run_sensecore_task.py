@@ -36,6 +36,7 @@ else:
 
 def run_cmd(cmd, check=True, capture_output=True):
     """执行命令，返回输出或抛出异常"""
+    print(f"CMD: {cmd}")
     result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True)
     if check and result.returncode != 0:
         print(f"Command failed: {cmd}\nSTDERR: {result.stderr}")
@@ -43,6 +44,7 @@ def run_cmd(cmd, check=True, capture_output=True):
     return result
 
 def run_cmd_live(cmd):
+    print(f"CMD: {cmd}")
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
     for line in process.stdout:
         print(line, end='', flush=True)
