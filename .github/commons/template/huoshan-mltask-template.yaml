@@ -15,9 +15,7 @@ UserCodePath: ""
 # 容器中的代码挂载路径
 RemoteMountCodePath: "/root/code/"
 # 环境变量
-Envs: 
-    - Name: "DETAILED_PERF_ENABLE"
-      Value: True
+Envs: []
 
 # 镜像 URL 地址
 ImageUrl: "iag-ad-01-cn-shanghai.cr.volces.com/ad/kairos_sensenova:v0.0.1"

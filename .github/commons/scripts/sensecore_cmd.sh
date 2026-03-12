@@ -22,7 +22,7 @@ upload_artifacts() {
     fi
 
     remote_endpoint="white-bucket.aoss.cn-sh-01b.sensecoreapi-oss.cn"
-    ads-cli -q cp "$src_dir" "s3://${ak}:${sk}@${remote_endpoint}/${remote_dir}" || echo "Upload failed but continuing"
+    ads-cli -q cp $src_dir s3://${ak}:${sk}@${remote_endpoint}/${remote_dir} || echo "Upload failed but continuing"
     echo "Upload $src_dir to ${remote_dir}..."
 }
 
@@ -46,8 +46,8 @@ touch "$log_path"
     ls -alh
     echo "Run cmd: $case_cmd"
     $case_cmd
+    echo "Run cmd: ls output -alh"
     ls output -alh
+    upload_artifacts "output/*/*"
 } 2>&1 | tee "$log_path"
 
-# 如果业务逻辑块成功（脚本未提前退出），则上传 output 产物
-upload_artifacts "output/*/*"

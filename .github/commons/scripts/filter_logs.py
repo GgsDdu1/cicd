@@ -103,7 +103,6 @@ def main():
     tables = extract_tables(lines)
     memorys = extract_max_memory_allocated(lines)
     times = extract_cost_times(lines)
-
     # 输出
     # 1. GPU 显存统计块
     for _, block in gpu_stat_blocks:

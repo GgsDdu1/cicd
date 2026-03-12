@@ -232,7 +232,6 @@ if __name__ == '__main__':
     if dist.is_initialized():
         dist.destroy_process_group()
 
-    if os.getenv("DETAILED_PERF_ENABLE", False):
-        torch.cuda.synchronize()
-        print(f"[GPU {local_rank}] max_memory_allocated (GB): {torch.cuda.max_memory_allocated() / 1024**3:.4f}")
-        print(torch.cuda.memory_summary(device=None, abbreviated=False))
+    torch.cuda.synchronize()
+    print(f"[GPU {local_rank}] max_memory_allocated (GB): {torch.cuda.max_memory_allocated() / 1024**3:.4f}")
+    print(torch.cuda.memory_summary(device=None, abbreviated=False))
