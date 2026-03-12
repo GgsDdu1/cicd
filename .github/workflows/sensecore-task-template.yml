@@ -84,7 +84,7 @@ jobs:
           REMOTE_DIR: ${{ inputs.remote_dir }}
           AOSS_AK: ${{ secrets.AOSS_AK }}
           AOSS_SK: ${{ secrets.AOSS_SK }}
-          WORKSPACE_NAME: $ {{ inputs.workspace_name }}
+          WORKSPACE_NAME: ${{ inputs.workspace_name }}
         run: |
           set -e
           echo "🔧 Configuring sensecore config.yaml..."
