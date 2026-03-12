@@ -223,7 +223,7 @@ def main():
     # 1. 检查同名任务（所有状态）
     print(f"Checking for existing tasks with name: {task_name}")
     cmd = f"sco acp jobs list --workspace-name={config['WorkspaceName']} --page-size 20 -o json"
-    result = run_cmd_live(cmd, check=True)
+    result = run_cmd_live(cmd)
     tasks = json.loads(result.stdout)
     
     # 筛选同名任务并按创建时间排序（最新的在前）
