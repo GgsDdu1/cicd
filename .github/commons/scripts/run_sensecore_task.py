@@ -142,6 +142,7 @@ def wait_for_completion(task_id, interval):
 def fetch_logs_on_failure():
     """如果任务失败，获取并打印日志"""
     print("Fetching logs due to task failure...")
+    print("="*50)
     remote_dir = os.environ.get('REMOTE_DIR')
 
     script_dir = os.path.dirname(os.path.abspath(__file__))

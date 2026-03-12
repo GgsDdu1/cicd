@@ -55,7 +55,7 @@ jobs:
       matrix:
         include:
           - job_name: 5090_480p_t2v_1gpu
-            case_cmd: "bash .github/commons/examples/inference.sh .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD.py "
+            case_cmd: "bash .github/commons/examples/inference.sh .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_5090.py "
     name: ${{ matrix.job_name }}
     uses: ./.github/workflows/sensecore-task-template.yml
     with:
