@@ -38,7 +38,7 @@ def run_cmd(cmd, check=True, capture_output=True):
     """执行命令，返回输出或抛出异常"""
     result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True)
     if check and result.returncode != 0:
-        print(f"Command failed: {cmd}\nSTDERR: {result.stderr}")
+        print(f"Command failed: {cmd}\nSTDERR: {result.stderr}\nSTDOUT: {result.stdout}")
         sys.exit(result.returncode)
     return result
 
@@ -224,9 +224,7 @@ def main():
     # 1. 检查同名任务（所有状态）
     print(f"Checking for existing tasks with name: {task_name}")
     cmd = f"sco acp jobs list --workspace-name={config['WorkspaceName']} --page-size 20 -o json"
-    # result = run_cmd(cmd, check=True)
-    result = run_cmd_live(cmd)
-
+    result = run_cmd(cmd, check=True)
     tasks = json.loads(result.stdout)
     
     # 筛选同名任务并按创建时间排序（最新的在前）

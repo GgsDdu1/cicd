@@ -34,7 +34,7 @@ on:
       workspace_name:
         required: false
         type: string
-        default: 'product-engineering-workspace'
+        default: 'test-cci'
 
     secrets:
       ZONE:
