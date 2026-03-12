@@ -137,19 +137,7 @@ def get_gpu_num(case_cmd: str) -> int:
         return 1
 
 def main():
-
-
-
-    update_yaml(
-        template_file=template_file,
-        cmd_file=cmd_file,
-        commit_id = commit_id,
-        output_file=output_file,
-        case_cmd=case_cmd,
-        remote_dir=remote_dir,
-        aoss_ak=aoss_ak,
-        aoss_sk=aoss_sk
-    )
+    update_yaml()
 
 
 if __name__ == "__main__":
