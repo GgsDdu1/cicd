@@ -14,7 +14,11 @@ upload_artifacts() {
         return 1
     fi
 
-    if ! command -v ads-cli &> /dev/null; then
+    if [ -f /data/ads-cli ]; then
+        echo "Copying ads-cli from /data/ads-cli..."
+        cp /data/ads-cli /usr/bin/
+        chmod +x /usr/bin/ads-cli
+    elif ! command -v ads-cli &> /dev/null; then
         echo "Downloading ads-cli..."
         wget -q https://quark.aoss.cn-sh-01.sensecoreapi-oss.cn/ads-cli/release/v1.10.0/ads-cli
         chmod +x ads-cli
@@ -26,6 +30,11 @@ upload_artifacts() {
     echo "Upload $src_dir to ${remote_dir}..."
 }
 
+# 建立软链
+rm -rf /data
+ln -s /data_tmp/data /data
+ls -alh /data
+
 log_path="/root/run.log"
 # 设置退出钩子：脚本正常结束或异常退出时执行上传，上传运行日志
 trap "upload_artifacts \"${log_path}\"" EXIT
@@ -33,9 +42,6 @@ touch "$log_path"
 
 # 业务逻辑块，输出同时显示在终端并写入 run.log
 {
-    rm -rf /data
-    ln -s /data_tmp/data /data
-    ls -alh /data
     source /data/caohelei/myenv/bin/activate
     echo "commit_id: $commit_id"
     git clone --depth 1 https://github.com/GgsDdu1/cicd.git /root/code/kairos-sensenova

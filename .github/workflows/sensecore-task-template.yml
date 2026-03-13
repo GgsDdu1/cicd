@@ -123,7 +123,7 @@ jobs:
           if [ -f "$TASKID_FILE" ]; then
             TASK_ID=$(cat "$TASKID_FILE")
             echo "🧹 Cancelling task $TASK_ID due to workflow cancellation"
-            sco acp jobs stop --workspace-name ${WORKSPACE_NAME} ${task_id}
+            sco acp jobs stop --workspace-name ${WORKSPACE_NAME} ${TASK_ID}
           else
             echo "⚠️ No $TASKID_FILE found, skipping cancellation"
           fi

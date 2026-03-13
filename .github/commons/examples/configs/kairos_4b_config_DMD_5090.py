@@ -1,10 +1,10 @@
 
-KAIROS_MODEL_DIR = '/data/caohelei/models'
+KAIROS_MODEL_DIR = '/data/cml/models'
 
 text_encoder_path =  f'{KAIROS_MODEL_DIR}/Qwen_AWQ/'
 vae_path = f'{KAIROS_MODEL_DIR}/Wan2.1_VAE.pth'
 prompt_rewriter_path = f'{KAIROS_MODEL_DIR}/Qwen/Qwen3-VL-8B-Instruct/'
-pretrained_dit = f'/data/wuxn/kairos-4b-480p-dmd.safetensors'
+pretrained_dit = f'{KAIROS_MODEL_DIR}/kairos_robot_distill_model.safetensors'
 
 tokenizer_path=None
 
