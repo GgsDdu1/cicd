@@ -56,6 +56,8 @@ jobs:
         include:
           - job_name: 5090_480p_t2v_1gpu
             case_cmd: "bash .github/commons/examples/inference.sh .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_5090.py "
+          - job_name: 5090_480p_ti2v_4gpu
+            case_cmd: "bash .github/commons/examples/multi_gpu_inference.sh .github/commons/examples/example_ti2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_5090.py 4 "
     name: ${{ matrix.job_name }}
     uses: ./.github/workflows/sensecore-task-template.yml
     with:
