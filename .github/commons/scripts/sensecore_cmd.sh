@@ -42,7 +42,7 @@ touch "$log_path"
 
 # 业务逻辑块，输出同时显示在终端并写入 run.log
 {
-    source /data/caohelei/myenv/bin/activate
+    source /data/swj/myenv/bin/activate
     echo "commit_id: $commit_id"
     git clone --depth 1 https://github.com/GgsDdu1/cicd.git /root/code/kairos-sensenova
     # git clone --depth 1 https://github.com/kairos-agi/kairos-sensenova.git /root/code/kairos-sensenova
