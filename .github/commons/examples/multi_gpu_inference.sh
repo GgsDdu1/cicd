@@ -2,7 +2,7 @@
 CURR_FILE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 INPUT_FILE=${1:-"${CURR_FILE_DIR}/example_t2v.json"}
-CONFIG_FILE=${2:-"${CURR_FILE_DIR}/configs/kairos_4b_config_DMD.py"}
+CONFIG_FILE=${2:-"${CURR_FILE_DIR}/configs/kairos_4b_config_DMD_A800.py"}
 GPU=${3:-"4"}
 
 CODE_DIR="$(cd "${CURR_FILE_DIR}/../../.." && pwd)"

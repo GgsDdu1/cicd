@@ -1,10 +1,6 @@
-
-pretrained_dit = f'/kairos_vepfs_volc/action/lipu/workshop/kairos_robot_distill_model.safetensors'
-# text_encoder_path =  f'/kairos-engineer/kairos-engineer/swj/kairos-sensenova/models/Qwen2.5-VL-7B-Instruct-AWQ/'
-text_encoder_path = '/kairos-engineer/ModelZoo/Moda/Common/GEncoder/WM-GEncoder-VL-LatentFeature-Common-BF16-v0.0.1/'
-vae_path = f'/kairos-engineer/ModelZoo/Moda/Common/GDecoder/WM-GDecoder-LatentFeature-Video-Common-BF16-v2.1.0//Wan2.1_VAE.pth'
-prompt_rewriter_path = f'/kairos-engineer/kairos-engineer/zhy/resource/models/Qwen3-VL-8B-Instruct/'
-
+pretrained_dit = '/kairos-engineer/ModelZoo/Moda//Common/Predict/WM-Predict-LatentFeature-LatentFeature-Common-BF16-v0.0.1/model.safetensors'
+text_encoder_path = '/kairos-engineer/kairos-engineer/swj/kairos-sensenova/models/Qwen2.5-VL-7B-Instruct-AWQ'
+vae_path = '/kairos-engineer/ModelZoo/Moda//Common/GDecoder/WM-GDecoder-LatentFeature-Video-Common-BF16-v2.1.0//Wan2.1_VAE.pth' 
 tokenizer_path=None
 
 pipeline = dict(

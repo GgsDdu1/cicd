@@ -27,7 +27,7 @@ from kairos.modules.utils import save_video, save_image, parallel_state, FLAGS_K
 def parse_args():
     parser = argparse.ArgumentParser(description='TRAIN_MODEL_LOOP')
     parser.add_argument('--input_file', default='', help='input_file')
-    parser.add_argument('--config_file', default='.github/commons/examples/configs/kairos_4b_config_DMD.py', help='config_file')
+    parser.add_argument('--config_file', default='.github/commons/examples/configs/kairos_4b_config_DMD_A800.py', help='config_file')
 
 
     args = parser.parse_args()

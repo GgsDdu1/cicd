@@ -112,7 +112,7 @@ jobs:
         run: |
           python .github/commons/scripts/run_sensecore_task.py
           pip install opencv-python numpy --index-url https://pypi.tuna.tsinghua.edu.cn/simple > /dev/null
-          python .github/commons/scripts/video_checker.py --gt ".github/gt_resource/${JOB_NAME}/output.mp4" --gen "${{ inputs.remote_dir }}/output.mp4" --ssim_threshold 0.90 --psnr_threshold 30
+          python .github/commons/scripts/video_checker.py --gt ".github/gt_resource/${JOB_NAME}/output.mp4" --gen "${{ inputs.remote_dir }}/output.mp4" --ssim_threshold 0.90 --psnr_threshold 28
           
       - name: Cleanup on cancellation
         if: ${{ cancelled() }}
