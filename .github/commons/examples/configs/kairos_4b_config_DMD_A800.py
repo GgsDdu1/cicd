@@ -1,4 +1,4 @@
-pretrained_dit = '/kairos-engineer/ModelZoo/Moda//Common/Predict/WM-Predict-LatentFeature-LatentFeature-Common-BF16-v0.0.1/model.safetensors'
+pretrained_dit = '/kairos_vepfs_volc/action/lipu/workshop/kairos_robot_distill_model.safetensors'
 text_encoder_path = '/kairos-engineer/kairos-engineer/swj/kairos-sensenova/models/Qwen2.5-VL-7B-Instruct-AWQ'
 vae_path = '/kairos-engineer/ModelZoo/Moda//Common/GDecoder/WM-GDecoder-LatentFeature-Video-Common-BF16-v2.1.0//Wan2.1_VAE.pth' 
 tokenizer_path=None
