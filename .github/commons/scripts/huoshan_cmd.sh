@@ -2,7 +2,7 @@
 set -e
 export http_proxy
 export https_proxy
-pip install  autoawq -i https://pypi.tuna.tsinghua.edu.cn/simple
+
 echo "commit_id: $commit_id"
 git clone --depth 1 https://github.com/GgsDdu1/cicd.git /root/code/kairos-sensenova
 # git clone --depth 1 https://github.com/kairos-agi/kairos-sensenova.git /root/code/kairos-sensenova
