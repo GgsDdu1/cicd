@@ -97,7 +97,7 @@ def update_yaml():
     if "$case_cmd" in cmd_content:
         cmd_content = cmd_content.replace("$case_cmd", case_cmd)
     if "C500" in job_name:
-        cmd_content.replace("source /data/swj/myenv/bin/activate", "")
+        cmd_content = cmd_content.replace("source /data/swj/myenv/bin/activate", "")
     data["Command"] = cmd_content
 
     if os.environ.get("WORKSPACE_NAME", ""):

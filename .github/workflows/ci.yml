@@ -75,9 +75,28 @@ jobs:
       matrix:
         include:
           - job_name: C500_480p_ti2v_1gpu
-            case_cmd: "export IS_METAX=1 && bash .github/commons/examples/inference.sh .github/commons/examples/example_ti2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py "
-          # - job_name: C500_720p_t2v_4gpu
-          #   case_cmd: "export IS_METAX=1 && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_t2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 4"
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/inference.sh .github/commons/examples/example_ti2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py "
+          - job_name: C500_480p_t2v_1gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/inference.sh .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py "
+          - job_name: C500_720p_ti2v_1gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/inference.sh .github/commons/examples/example_ti2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py "
+          - job_name: C500_720p_t2v_1gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/inference.sh .github/commons/examples/example_t2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py "
+          
+          - job_name: C500_480p_t2v_4gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 4"
+          - job_name: C500_480p_ti2v_4gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_ti2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 4"    
+          - job_name: C500_720p_t2v_4gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_t2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 4"
+          - job_name: C500_720p_ti2v_4gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_ti2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 4"
+          
+          - job_name: C500_720p_ti2v_8gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_ti2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 8"
+          - job_name: C500_480p_t2v_8gpu
+            case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 8"
+    
     name: ${{ matrix.job_name }}
     uses: ./.github/workflows/sensecore-task-template.yml
     with:
