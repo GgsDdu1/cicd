@@ -96,6 +96,8 @@ def update_yaml():
     # 因为大装置acp环境变量不支持带空格的value,所以直接替换到command中去
     if "$case_cmd" in cmd_content:
         cmd_content = cmd_content.replace("$case_cmd", case_cmd)
+    if "C500" in job_name:
+        cmd_content.replace("source /data/swj/myenv/bin/activate", "")
     data["Command"] = cmd_content
 
     if os.environ.get("WORKSPACE_NAME", ""):
