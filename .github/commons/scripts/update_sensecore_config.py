@@ -61,7 +61,8 @@ def update_yaml():
     aoss_sk = os.environ.get('AOSS_SK')
     http_proxy = os.environ.get('HTTP_PROXY')
     https_proxy = os.environ.get('HTTPS_PROXY')
-
+    job_name =  os.environ.get('JOB_NAME')
+    
     # 1. 读取 YAML 模板
     with open(template_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -99,10 +100,17 @@ def update_yaml():
 
     if os.environ.get("WORKSPACE_NAME", ""):
         data["WorkspaceName"] = os.environ.get("WORKSPACE_NAME")
-
+    
     # 修改资源配置
     gpu_num = get_gpu_num(case_cmd)
-    data["WorkerSpec"] = f"n12lp.nn.i10.{gpu_num}"
+    if "5090" in job_name:
+        data["WorkerSpec"] = f"n12lp.nn.i10.{gpu_num}"
+        data["Aec2Name"] = "engineer-5090"
+        data["Image"] = "registry.cn-sh-01.sensecore.cn/ccr-xworld/service_kairos_sensenova:kairos-20260201133229"
+    elif "C500" in job_name:
+        data["WorkerSpec"] = f"x1ls.ri.i10.{gpu_num}"
+        data["Aec2Name"] = "c500testing"
+        data["Image"] = "registry.cn-sh-01.sensecore.cn/ccr-xworld/service_kairos_sensenova_c500:kairos-multi-20260211073136"
 
 
     # 写入新的 YAML
