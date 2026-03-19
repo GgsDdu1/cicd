@@ -27,6 +27,7 @@ except ModuleNotFoundError:
 
 IS_CUDA = torch.cuda.is_available()
 if not IS_CUDA:
+    import os
     os.environ["TORCHDYNAMO_DISABLE"] = "1"
 
 from kairos.modules.utils import FLAGS_KAIROS_CUDA_SM
