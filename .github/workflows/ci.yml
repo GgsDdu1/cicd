@@ -96,7 +96,6 @@ jobs:
             case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_ti2v.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 8"
           - job_name: C500_480p_t2v_8gpu
             case_cmd: "export IS_METAX=1 && export PATH="/opt/conda/bin/:$PATH" && bash .github/commons/examples/multi_gpu_inference.sh  .github/commons/examples/example_t2v_480P.json .github/commons/examples/configs/kairos_4b_config_DMD_C500.py 8"
-    
     name: ${{ matrix.job_name }}
     uses: ./.github/workflows/sensecore-task-template.yml
     with:
