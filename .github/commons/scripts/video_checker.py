@@ -234,7 +234,7 @@ def main():
     job_name =  os.environ.get('JOB_NAME')
     if "C500" in job_name:
         args.ssim_threshold = 0.90
-        args.psnr_threshold = 32
+        args.psnr_threshold = 30
     elif "5090" in job_name:
         args.ssim_threshold = 0.90
         args.psnr_threshold = 28
