@@ -234,13 +234,13 @@ def main():
     job_name =  os.environ.get('JOB_NAME')
     if "C500" in job_name:
         args.ssim_threshold = 0.90
-        args.psnr_threshold = 30
+        args.psnr_threshold = 32
     elif "5090" in job_name:
         args.ssim_threshold = 0.90
         args.psnr_threshold = 28
     elif "A800" in job_name:
-        args.ssim_threshold = 0.85
-        args.psnr_threshold = 28
+        args.ssim_threshold = 0.90
+        args.psnr_threshold = 30
         
     checker = VideoConsistencyChecker(ssim_threshold=args.ssim_threshold, psnr_threshold=args.psnr_threshold)
 
