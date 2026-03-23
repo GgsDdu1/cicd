@@ -58,7 +58,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Verify secrets are available
         run: |
           if [ -z "$ZONE" ] || [ ${#AOSS_AK} -eq 0 ]; then
@@ -134,4 +134,6 @@ jobs:
         with:
           name: ${{ inputs.job_name }}
           path: ${{ inputs.remote_dir }}/output.mp4
+          retention-days: 30 
+
       
