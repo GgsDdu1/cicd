@@ -8,7 +8,6 @@ git clone --depth 1 https://github.com/GgsDdu1/cicd.git /root/code/kairos-sensen
 cd /root/code/kairos-sensenova
 git fetch --depth 1 origin "$commit_id"
 git checkout "$commit_id"
-git lfs pull
 ls -alh
 # 测试运行的命令
 echo "Run cmd: {$case_cmd}"
